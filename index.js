@@ -16,7 +16,7 @@ app.use(rollup({
 }));
 app.use(sass({
   root: __dirname,
-  src:  'frontend/sass',
+  src:  'frontend/css',
   dest: 'static',
   outputStyle: 'extended',
   prefix:  '/css'
