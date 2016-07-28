@@ -3,13 +3,14 @@ const rollup  = require('express-middleware-rollup');
 const sass    = require('node-sass-middleware');
 const path    = require('path');
 const buble   = require('rollup-plugin-buble');
+const appRoot = require('app-root-path').toString();
 
 module.exports = app => {
   // Javascript compilation
   app.use(rollup({
     src: 'frontend/js',
-    dest: 'static',
-    root: __dirname,
+    dest: 'static/js',
+    root: appRoot,
     prefix: '/js',
     rollupOpts: {
       plugins: [buble()]
@@ -18,13 +19,16 @@ module.exports = app => {
 
   // Css compilation
   app.use(sass({
-    root: __dirname,
+    root: appRoot,
     src: 'frontend/css',
-    dest: 'static',
+    dest: 'static/css',
     outputStyle: 'extended',
-    prefix: '/css'
+    prefix: '/css',
+    includePaths: [
+      `${appRoot}/node_modules`
+    ]
   }));
 
   // Static file server
-  app.use(express.static(path.join(__dirname, 'static')));
+  app.use(express.static(`${appRoot}/static`));
 };

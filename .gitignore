@@ -1,5 +1,6 @@
 node_modules/
-static/**/*
-static/*
-!static/.gitkeep
+!static/js/.gitkeep
+!static/cs/.gitkeep
+static/js/*
+static/cs/*
 **/npm-debug.log
