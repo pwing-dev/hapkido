@@ -2,10 +2,10 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const ObjectId = Schema.Types.ObjectId;
 
-const Option = new Schema({
-  parent: ObjectId,
+const Quantity = new Schema({
   name: String,
-  description: String
+  media: [ObjectId], // Assets
+  amount: Number
 });
 
-module.exports = Option;
+module.exports = Quantity;

@@ -6,7 +6,8 @@ const User = new Schema({
   provider: String,
   id: String,
   displayName: String,
-  avatar: ObjectId,
+  room: String,
+  avatar: ObjectId, // Asset
   organizations: [ObjectId],
   roles: [ObjectId],
   services: [ObjectId],
