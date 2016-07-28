@@ -7,7 +7,7 @@ const Job = new Schema({
   time: String, // description of when the job is due. Interval or Date. TODO better type
   name: String,
   description: String,
-  assignee: ObjectId // role or user
+  assignees: [ObjectId] // role or users
 });
 
 module.exports = Job;

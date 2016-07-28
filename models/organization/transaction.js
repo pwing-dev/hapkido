@@ -5,6 +5,7 @@ const ObjectId = Schema.Types.ObjectId;
 const Transaction = new Schema({
   quantity: ObjectId,
   difference: Number,
+  timestamp: Date,
   description: String
 });
 
