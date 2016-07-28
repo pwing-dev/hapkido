@@ -5,7 +5,7 @@ const session         = require('express-session');
 const exphbs          = require('express-handlebars');
 const morgan          = require('morgan');
 const config          = require('config');
-const path            = require('path');
+const appRoot         = require('app-root-path').toString();
 
 const handleStatic    = require('./routes/static');
 const router          = require('./routes/router');

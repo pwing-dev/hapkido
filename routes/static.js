@@ -1,7 +1,6 @@
 const express = require('express');
 const rollup  = require('express-middleware-rollup');
 const sass    = require('node-sass-middleware');
-const path    = require('path');
 const buble   = require('rollup-plugin-buble');
 const appRoot = require('app-root-path').toString();
 
