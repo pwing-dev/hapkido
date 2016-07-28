@@ -1,9 +1,33 @@
-const express = require('express');
-const exphbs  = require('express-handlebars');
-const handleStatic = require('./routes/static');
+const express         = require('express');
+const cookieParser    = require('cookie-parser');
+const bodyParser      = require('body-parser');
+const session         = require('express-session');
+const exphbs          = require('express-handlebars');
+const morgan          = require('morgan');
+const config          = require('config');
+const path            = require('path');
 
+const handleStatic    = require('./routes/static');
+const router          = require('./routes/router');
+
+// express setup
 const app = express();
+
+// body parser
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+
+// cookie parser
+app.use(cookieParser());
+
+// request logging
+app.use(morgan('dev'));
+
+// static asset generation
 handleStatic(app);
+
+// serve static assets
+app.use(express.static(path.join(__dirname, 'static')));
 
 // Templating
 app.set('views', 'frontend/html/');
@@ -13,10 +37,10 @@ app.engine('.hbs', exphbs({
   layoutsDir: 'frontend/html/layouts/',
   partialsDir: 'frontend/html/partials/'
 }));
+
 app.set('view engine', '.hbs');
-app.get('/', (req, res) => {
-  res.render('dashboard');
-});
 
+// include router
+app.use('/', router);
 
-app.listen(3000);
+app.listen(config.get('server.port'));
