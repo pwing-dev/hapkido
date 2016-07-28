@@ -1,6 +1,13 @@
 {
   "server": {
     "port": "3000",
-    "mongo": ""
+    "mongo": "mongodb://localhost/hapkido",
+    "session": {
+    	"secret": "foobar",
+    	"expiry": 31536000000
+    }
+  },
+  "app": {
+  	"name": "hapkido"
   }
 }

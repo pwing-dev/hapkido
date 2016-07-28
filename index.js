@@ -6,9 +6,14 @@ const exphbs          = require('express-handlebars');
 const morgan          = require('morgan');
 const config          = require('config');
 const appRoot         = require('app-root-path').toString();
+const mongoose        = require('mongoose');
+const MongoSession    = require('connect-mongo')(session);
 
 const handleStatic    = require('./routes/static');
 const router          = require('./routes/router');
+
+// mongoose connect
+mongoose.connect(config.get('server.mongo'));
 
 // express setup
 const app = express();
@@ -19,6 +24,23 @@ app.use(bodyParser.json());
 
 // cookie parser
 app.use(cookieParser());
+
+// session management
+app.use(
+  session({
+    secret: config.get('server.session.secret'),
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      path: '/',
+      httpOnly: true,
+      maxAge: config.get('server.session.expiry')
+    },
+    store: new MongoSession({
+      mongooseConnection: mongoose.connection
+    })
+  })
+);
 
 // request logging
 app.use(morgan('dev'));
@@ -32,7 +54,16 @@ app.engine('.hbs', exphbs({
   defaultLayout: 'default',
   extname: '.hbs',
   layoutsDir: 'frontend/html/layouts/',
-  partialsDir: 'frontend/html/partials/'
+  partialsDir: 'frontend/html/partials/',
+  helpers: {
+    title: config.get('app.name'),
+    ifdef: (variable, options) => {
+      if (typeof variable !== 'undefined') {
+        return options.fn(this);
+      }
+      return options.inverse(this);
+    }
+  }
 }));
 
 app.set('view engine', '.hbs');

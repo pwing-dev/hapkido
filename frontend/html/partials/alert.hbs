@@ -1,0 +1,9 @@
+<div class="alert bg-{{type}}" role="alert">
+  <svg class="glyph stroked {{glyph}}">
+    <use xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#stroked-{{glyph}}"></use>
+    {{#if x}}
+      <a href="#" class="pull-right"><span class="glyphicon glyphicon-remove"></span></a>
+    {{/if}}
+  </svg>
+  {{message}}
+</div>
