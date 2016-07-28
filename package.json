@@ -1,0 +1,37 @@
+{
+  "name": "hapkido",
+  "version": "0.0.1",
+  "description": "HaDiKo management software for shit and stuff",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@git.tunw.net:d5dev/hapkido.git"
+  },
+  "author": "D5 Dev Team",
+  "license": "LGPL-2.0",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "config": "^1.21.0",
+    "cookie-parser": "^1.4.3",
+    "express": "^4.14.0",
+    "express-handlebars": "^3.0.0",
+    "express-middleware-rollup": "^1.1.0",
+    "express-session": "^1.14.0",
+    "mongoose": "^4.5.7",
+    "morgan": "^1.7.0",
+    "node-sass-middleware": "^0.9.8",
+    "passport": "^0.3.2",
+    "rollup-plugin-buble": "^0.12.1",
+    "rollup-plugin-uglify": "^1.0.1"
+  },
+  "devDependencies": {
+    "eslint": "^3.1.1",
+    "eslint-config-airbnb": "^9.0.1",
+    "eslint-plugin-import": "^1.12.0",
+    "eslint-plugin-node": "^2.0.0",
+    "nodemon": "^1.10.0"
+  }
+}
