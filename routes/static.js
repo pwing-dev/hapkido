@@ -12,19 +12,19 @@ module.exports = app => {
     root: __dirname,
     prefix: '/js',
     rollupOpts: {
-      plugins: [ buble() ]
+      plugins: [buble()]
     }
   }));
 
   // Css compilation
   app.use(sass({
     root: __dirname,
-    src:  'frontend/css',
+    src: 'frontend/css',
     dest: 'static',
     outputStyle: 'extended',
-    prefix:  '/css'
+    prefix: '/css'
   }));
 
   // Static file server
   app.use(express.static(path.join(__dirname, 'static')));
-}
+};

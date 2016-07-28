@@ -14,8 +14,8 @@ app.engine('.hbs', exphbs({
   partialsDir: 'frontend/html/partials/'
 }));
 app.set('view engine', '.hbs');
-app.get('/', function (req, res) {
-    res.render('dashboard');
+app.get('/', (req, res) => {
+  res.render('dashboard');
 });
 
 
