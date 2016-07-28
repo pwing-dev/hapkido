@@ -26,9 +26,6 @@ app.use(morgan('dev'));
 // static asset generation
 handleStatic(app);
 
-// serve static assets
-app.use(express.static(path.join(__dirname, 'static')));
-
 // Templating
 app.set('views', 'frontend/html/');
 app.engine('.hbs', exphbs({
