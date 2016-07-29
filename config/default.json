@@ -1,6 +1,6 @@
 {
   "server": {
-    "port": "3000",
+    "port": 3000,
     "mongo": "mongodb://localhost/hapkido",
     "session": {
     	"secret": "foobar",

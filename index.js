@@ -39,7 +39,7 @@ db.on('open', () => {
         maxAge: config.get('server.session.expiry')
       },
       store: new MongoSession({
-        mongooseConnection: mongoose.connection
+        mongooseConnection: db
       })
     })
   );

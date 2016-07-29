@@ -1,5 +1,4 @@
 const express = require('express');
-
 const router  = express.Router();
 
 router.get('/login', (req, res) => {
@@ -38,7 +37,7 @@ router.post('/login', (req, res) => {
 
 
 // protect all following routes
-function auth(req, res, next) {
+const auth = (req, res, next) => {
   if (req.session.authentificated) {
     next();
   } else {
@@ -46,7 +45,6 @@ function auth(req, res, next) {
     res.redirect('/login');
   }
 }
-
 router.use(auth);
 
 router.get('/dashboard', (req, res) => {
