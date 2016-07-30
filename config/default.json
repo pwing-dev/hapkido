@@ -1,10 +1,18 @@
 {
   "server": {
+    "domain": "localhost",
     "port": 3000,
+    "https": false,
     "mongo": "mongodb://localhost/hapkido",
     "session": {
     	"secret": "foobar",
     	"expiry": 31536000000
+    },
+    "auth": {
+      "google": {
+        "clientId": "501213114870-17hitfqiibdeiqdab3kvg87mcjp3b7fs.apps.googleusercontent.com",
+        "clientSecret": "LdaLDC_xadOmTIPirNJ24Jc3"
+      }
     }
   },
   "app": {

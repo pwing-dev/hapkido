@@ -1,8 +1,11 @@
-const express = require('express');
-const router  = express.Router();
+const express  = require('express');
+const passport = require('passport');
+const auth     = require('../auth');
+
+const router   = express.Router();
 
 router.get('/login', (req, res) => {
-  if (req.session.authentificated) {
+  if (req.session.authenticated) {
     res.redirect('/dashboard');
     return;
   }
@@ -13,12 +16,24 @@ router.get('/login', (req, res) => {
   });
 });
 
+router.get('/auth/google',
+  passport.authenticate('google', { scope: ['profile'] })
+);
+
+router.get(auth.googleCallbackPath, 
+  passport.authenticate('google', { failureRedirect: '/login' }),
+  function(req, res) {
+    // Successful authentication, redirect home.
+    res.redirect('/dashboard');
+  }
+);
+
 router.post('/login', (req, res) => {
   // TODO: replace with passport
   if (req.body.username === 'test' && req.body.password === 'test') {
     req.session.user_name       = 'test';
     req.session.user_id         = '0';
-    req.session.authentificated = true;
+    req.session.authenticated   = true;
     req.session.loginFailed     = false;
 
     if (req.session.reqPreAuth) {
@@ -29,7 +44,7 @@ router.post('/login', (req, res) => {
     return;
   }
 
-  req.session.authentificated = false;
+  req.session.authenticated   = false;
   req.session.loginFailed     = true;
 
   res.redirect('/login');
@@ -37,15 +52,15 @@ router.post('/login', (req, res) => {
 
 
 // protect all following routes
-const auth = (req, res, next) => {
-  if (req.session.authentificated) {
+const protect = (req, res, next) => {
+  if (req.session.authenticated) {
     next();
   } else {
     req.session.reqPreAuth = req.url; // store requested URL not allowed
     res.redirect('/login');
   }
 }
-router.use(auth);
+router.use(protect);
 
 router.get('/dashboard', (req, res) => {
   res.render('dashboard');

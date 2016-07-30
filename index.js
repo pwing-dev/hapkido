@@ -9,6 +9,7 @@ const appRoot         = require('app-root-path').toString();
 const mongoose        = require('mongoose');
 const MongoSession    = require('connect-mongo')(session);
 
+const auth            = require('./auth');
 const handleStatic    = require('./routes/static');
 const router          = require('./routes/router');
 
@@ -49,6 +50,9 @@ db.on('open', () => {
 
   // static asset generation
   handleStatic(app);
+
+  // setup passport authentication
+  auth.init(app);
 
   // Templating
   app.set('views', 'frontend/html/');
