@@ -1,6 +1,6 @@
 const express  = require('express');
 const passport = require('passport');
-const auth     = require('../auth');
+const auth     = require('./auth');
 const url      = require('url');
 const config   = require('config');
 const urljoin  = require('url-join');

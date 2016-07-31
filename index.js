@@ -10,7 +10,7 @@ const mongoose        = require('mongoose');
 const MongoSession    = require('connect-mongo')(session);
 const url             = require('url');
 
-const auth            = require('./auth');
+const auth            = require('./routes/auth');
 const handleStatic    = require('./routes/static');
 const router          = require('./routes/router');
 
