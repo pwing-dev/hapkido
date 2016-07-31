@@ -8,6 +8,14 @@ const LocalUser = require('../models/user/user-local');
 const router   = express.Router();
 const baseUrl  = url.parse(config.get('server.baseURL'));
 
+router.get('/', (req, res) => {
+  if (req.session.authenticated) {
+    res.redirect(genRedirect('/dashboard'));
+    return;
+  }
+  res.render('index');
+});
+
 router.get('/login', (req, res) => {
   console.log(req.user);
   if (req.session.authenticated) {
@@ -26,22 +34,35 @@ router.post('/login',
   passport.authenticate('local', {
     successRedirect: '/dashboard',
     failureRedirect: '/login',
-    failureFlash: true,
-  }), (req, res) => {
-  // passport
+    //failureFlash: true,
+  }),
+  (req, res) => {
+    // passport
     res.redirect('/login');
-  });
+  }
+);
+
+router.get('/register', (req, res) => {
+  if (req.session.authenticated) {
+    res.redirect(genRedirect('/dashboard'));
+    return;
+  }
+  res.render('register');
+});
 
 router.post('/register', (req, res) => {
   // just for testing, TODO: create view
-  LocalUser.register(new LocalUser({
-    username: req.body.username
-  }), req.body.password,
-  (err, account) => {
-    passport.authenticate('local')(req, res, () => {
-      res.send('register successful');
-    });
-  });
+  LocalUser.register(
+    new LocalUser({
+      username: req.body.username
+    }),
+    req.body.password,
+    (err, account) => {
+      passport.authenticate('local')(req, res, () => {
+        res.send('register successful');
+      });
+    }
+  );
 });
 
 router.get('/auth/google',
