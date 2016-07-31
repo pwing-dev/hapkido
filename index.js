@@ -8,13 +8,10 @@ const config          = require('config');
 const appRoot         = require('app-root-path').toString();
 const mongoose        = require('mongoose');
 const MongoSession    = require('connect-mongo')(session);
-const url             = require('url');
 
 const auth            = require('./routes/auth');
 const handleStatic    = require('./routes/static');
 const router          = require('./routes/router');
-
-const baseUrl         = url.parse(config.get('server.baseURL'));
 
 // initialize mongoose
 mongoose.connect(config.get('server.mongo'));
@@ -78,7 +75,7 @@ db.on('open', () => {
   app.set('view engine', '.hbs');
 
   // include router at subdirectory specified in config.json
-  app.use(baseUrl.pathname || '/', router);
+  app.use('/', router);
 
   app.listen(config.get('server.port'));
 });
