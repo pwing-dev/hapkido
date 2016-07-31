@@ -13,32 +13,41 @@ const googleCallbackPath = '/auth/google/callback';
 // LOCAL Strategy
 passport.use(new LocalStrategy(LocalUser.authenticate()));
 
-passport.serializeUser(LocalUser.serializeUser());
-passport.deserializeUser(LocalUser.deserializeUser());
-
 // GOOGLE Strategy
-passport.use(new GoogleAuth({
-  clientID: config.get('server.auth.google.clientId'),
-  clientSecret: config.get('server.auth.google.clientSecret'),
-  callbackURL: urljoin(baseUrl.path, googleCallbackPath),
-},
-(accessToken, refreshToken, profile, cb) => {
-  // TODO find user in our database and do the mapping
-  // User.findOrCreate({
-  //  googleId: profile.id
-  // }, (err, user) => {
-  return cb(null, profile);
-  // });
-}
+passport.use(new GoogleAuth(
+  {
+    clientID: config.get('server.auth.google.clientId'),
+    clientSecret: config.get('server.auth.google.clientSecret'),
+    callbackURL: urljoin(baseUrl.href, googleCallbackPath),
+  },
+  (accessToken, refreshToken, profile, cb) => {
+    // TODO find user in our database and do the mapping
+    // User.findOrCreate({
+    //  googleId: profile.id
+    // }, (err, user) => {
+    return cb(null, profile);
+    // });
+  }
 ));
 
 // TODO see https://github.com/passport/express-4.x-facebook-example/blob/master/server.js#L28
 passport.serializeUser((user, cb) => {
-  cb(null, user);
+  if (user.provider === 'local') {
+    return LocalUser.serializeUser()(user, cb);
+  } else if (user.provider === 'google') {
+    cb(null, user);
+  } else {
+
+  }
 });
 
-passport.deserializeUser((obj, cb) => {
-  cb(null, obj);
+passport.deserializeUser((user, cb) => {
+  console.log(user);
+  if (user.provider === 'local') {
+    return LocalUser.deserializeUser()(user, cb);
+  } else if (user.provider === 'google') {
+    cb(null, user);
+  }
 });
 
 module.exports = {
