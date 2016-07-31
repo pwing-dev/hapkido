@@ -10,7 +10,7 @@ const baseUrl  = url.parse(config.get('server.baseURL'));
 
 router.get('/', (req, res) => {
   if (req.session.authenticated) {
-    res.redirect(genRedirect('/dashboard'));
+    res.redirect('/dashboard');
     return;
   }
   res.render('index');
@@ -19,7 +19,7 @@ router.get('/', (req, res) => {
 router.get('/login', (req, res) => {
   console.log(req.user);
   if (req.session.authenticated) {
-    res.redirect(genRedirect('/dashboard'));
+    res.redirect('/dashboard');
     return;
   }
   res.render('login', {
@@ -44,7 +44,7 @@ router.post('/login',
 
 router.get('/register', (req, res) => {
   if (req.session.authenticated) {
-    res.redirect(genRedirect('/dashboard'));
+    res.redirect('/dashboard');
     return;
   }
   res.render('register');
