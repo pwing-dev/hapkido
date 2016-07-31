@@ -1,8 +1,7 @@
 {
   "server": {
-    "domain": "localhost",
     "port": 3000,
-    "https": false,
+    "baseURL": "http://127.0.0.1.xip.io:3000/test",
     "mongo": "mongodb://localhost/hapkido",
     "session": {
     	"secret": "foobar",
