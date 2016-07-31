@@ -4,8 +4,8 @@
     "baseURL": "http://127.0.0.1.xip.io:3000/",
     "mongo": "mongodb://localhost/hapkido",
     "session": {
-    	"secret": "foobar",
-    	"expiry": 31536000000
+      "secret": "foobar",
+      "expiry": 31536000000
     },
     "auth": {
       "google": {
