@@ -5,7 +5,7 @@ const url        = require('url');
 const urljoin    = require('url-join');
 
 const baseUrl    = url.parse(config.get('server.baseURL'));
-const googleCallbackPath = urljoin(baseUrl.href, '/auth/google/callback');
+const googleCallbackPath = urljoin(baseUrl.path, '/auth/google/callback');
 
 passport.use(new GoogleAuth({
   clientID: config.get('server.auth.google.clientId'),
