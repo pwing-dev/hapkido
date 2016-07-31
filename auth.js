@@ -3,9 +3,9 @@ const passport      = require('passport');
 const GoogleAuth    = require('passport-google-oauth20').Strategy;
 const url           = require('url');
 const urljoin       = require('url-join');
-const LocalUser     = require('../models/user/user-local.js');
+const LocalUser     = require('./models/user/user-local.js');
 const LocalStrategy = require('passport-local').Strategy;
-const User          = require('../models/user/user.js');
+const User          = require('./models/user/user.js');
 
 const baseUrl       = url.parse(config.get('server.baseURL'));
 const googleCallbackPath = '/auth/google/callback';

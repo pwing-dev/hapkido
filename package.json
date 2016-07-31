@@ -34,7 +34,8 @@
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^4.0.0",
     "rollup-plugin-buble": "^0.12.1",
-    "rollup-plugin-uglify": "^1.0.1"
+    "rollup-plugin-uglify": "^1.0.1",
+    "url-join": "^1.1.0"
   },
   "devDependencies": {
     "eslint": "^2.13.1",
