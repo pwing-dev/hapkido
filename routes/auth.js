@@ -2,14 +2,15 @@ const config     = require('config');
 const passport   = require('passport');
 const GoogleAuth = require('passport-google-oauth20').Strategy;
 const url        = require('url');
+const urljoin    = require('url-join');
 
 const baseUrl    = url.parse(config.get('server.baseURL'));
-const googleCallbackPath = '/auth/google/callback';
+const googleCallbackPath = urljoin(baseUrl.href, '/auth/google/callback');
 
 passport.use(new GoogleAuth({
   clientID: config.get('server.auth.google.clientId'),
   clientSecret: config.get('server.auth.google.clientSecret'),
-  callbackURL: url.resolve(baseUrl.href, googleCallbackPath),
+  callbackURL: googleCallbackPath,
 },
 (accessToken, refreshToken, profile, cb) => {
   // TODO find user in our database and do the mapping

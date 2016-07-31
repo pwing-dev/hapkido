@@ -1,7 +1,7 @@
 {
   "server": {
     "port": 3000,
-    "baseURL": "http://127.0.0.1.xip.io:3000/",
+    "baseURL": "http://127.0.0.1.xip.io:3000",
     "mongo": "mongodb://localhost/hapkido",
     "session": {
     	"secret": "foobar",

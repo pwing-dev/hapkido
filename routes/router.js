@@ -10,7 +10,7 @@ const baseUrl  = url.parse(config.get('server.baseURL'));
 
 // append url to basepath
 const genRedirect = redirectPath => {
-  return urljoin(baseUrl.href, redirectPath);
+  return urljoin(baseUrl.pathname || '/', redirectPath);
 };
 
 router.get('/login', (req, res) => {
