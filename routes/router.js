@@ -81,7 +81,8 @@ router.get(auth.googleCallbackPath,
 router.get('/logout', (req, res) => {
   req.session.destroy();
   // TODO: replace with view
-  res.send('logout successful');
+  //res.send('logout successful');
+  res.redirect('/');
 });
 
 // protect all following routes
