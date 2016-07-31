@@ -9,8 +9,8 @@ const appRoot         = require('app-root-path').toString();
 const mongoose        = require('mongoose');
 const MongoSession    = require('connect-mongo')(session);
 
-const auth            = require('./routes/auth');
-const handleStatic    = require('./routes/static');
+const auth            = require('./auth');
+const handleStatic    = require('./static');
 const router          = require('./routes/router');
 
 // initialize mongoose
