@@ -85,9 +85,9 @@ const startServer = () => {
   });
 };
 if (require.main === module) {
-	// called directly from cli
-	startServer();
+  // called directly from cli
+  startServer();
 } else {
-	// required by other file
-	module.exports = startServer;
+  // required by other file
+  module.exports = startServer;
 }
