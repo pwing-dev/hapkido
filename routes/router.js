@@ -3,7 +3,7 @@ const passport  = require('passport');
 const url       = require('url');
 const config    = require('config');
 
-const auth      = require('hapkido/auth');
+const auth      = require('hapkido/server/auth');
 const LocalUser = require('hapkido/models/user/user-local');
 
 const router   = express.Router();

@@ -10,8 +10,8 @@ const mongoose        = require('mongoose');
 const MongoSession    = require('connect-mongo')(session);
 const flash           = require('connect-flash');
 
-const auth            = require('hapkido/auth');
-const handleStatic    = require('hapkido/static');
+const auth            = require('hapkido/server/auth');
+const handleStatic    = require('hapkido/server/static');
 const router          = require('hapkido/routes/router');
 
 // initialize mongoose
