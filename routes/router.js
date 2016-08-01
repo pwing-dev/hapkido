@@ -1,9 +1,10 @@
 const express   = require('express');
 const passport  = require('passport');
-const auth      = require('../auth');
 const url       = require('url');
 const config    = require('config');
-const LocalUser = require('../models/user/user-local');
+
+const auth      = require('hapkido/auth');
+const LocalUser = require('hapkido/models/user/user-local');
 
 const router   = express.Router();
 const baseUrl  = url.parse(config.get('server.baseURL'));
