@@ -8,6 +8,7 @@ const config          = require('config');
 const appRoot         = require('app-root-path').toString();
 const mongoose        = require('mongoose');
 const MongoSession    = require('connect-mongo')(session);
+const flash           = require('connect-flash');
 
 const auth            = require('./auth');
 const handleStatic    = require('./static');
@@ -16,7 +17,7 @@ const router          = require('./routes/router');
 // initialize mongoose
 mongoose.connect(config.get('server.mongo'));
 const db = mongoose.connection;
-db.on('error', e => console.error('Connection error: ', e));
+db.on('error', e => {console.error('Connection error: ', e); process.exit(1)});
 db.on('open', () => {
   // express setup
   const app = express();
@@ -27,6 +28,8 @@ db.on('open', () => {
 
   // cookie parser
   app.use(cookieParser());
+
+  app.use(flash());
 
   // session management
   app.use(
