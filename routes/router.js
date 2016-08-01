@@ -1,13 +1,10 @@
 const express   = require('express');
 const passport  = require('passport');
-const url       = require('url');
-const config    = require('config');
 
 const auth      = require('hapkido/server/auth');
 const LocalUser = require('hapkido/models/user/user-local');
 
 const router   = express.Router();
-const baseUrl  = url.parse(config.get('server.baseURL'));
 
 router.get('/', (req, res) => {
   if (req.isAuthenticated()) {
@@ -32,7 +29,7 @@ router.get('/login', (req, res) => {
 
 router.post('/login',
   // authenticate with passport-local
-  passport.authenticate('local', {successRedirect: '/dashboard', failureRedirect: '/login'})
+  passport.authenticate('local', { successRedirect: '/dashboard', failureRedirect: '/login' })
 );
 
 router.get('/register', (req, res) => {
@@ -80,7 +77,7 @@ router.get(auth.googleCallbackPath,
 router.get('/logout', (req, res) => {
   req.session.destroy();
   // TODO: replace with view
-  //res.send('logout successful');
+  // res.send('logout successful');
   res.redirect('/');
 });
 

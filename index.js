@@ -5,7 +5,6 @@ const session         = require('express-session');
 const exphbs          = require('express-handlebars');
 const morgan          = require('morgan');
 const config          = require('config');
-const appRoot         = require('app-root-path').toString();
 const mongoose        = require('mongoose');
 const MongoSession    = require('connect-mongo')(session);
 const flash           = require('connect-flash');
@@ -18,7 +17,10 @@ const router          = require('hapkido/routes/router');
 const startServer = () => {
   mongoose.connect(config.get('server.mongo'));
   const db = mongoose.connection;
-  db.on('error', e => {console.error('Connection error: ', e); process.exit(1)});
+  db.on('error', e => {
+    console.error('Connection error: ', e);
+    process.exit(1);
+  });
   db.on('open', () => {
     // express setup
     const app = express();

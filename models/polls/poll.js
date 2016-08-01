@@ -7,4 +7,4 @@ const Poll = new Schema({
   votes: [ObjectId]
 });
 
-module.exports = Schedule;
+module.exports = Poll;
