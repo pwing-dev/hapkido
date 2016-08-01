@@ -12,7 +12,6 @@
     "node"
   ],
   "rules": {
-    "indent": [0, 2],
     "node/no-missing-import": 2,
     "node/no-missing-require": 2,
     "quotes": [2, "single", {"avoidEscape": true, "allowTemplateLiterals": true}],
