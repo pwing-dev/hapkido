@@ -15,70 +15,79 @@ const handleStatic    = require('./static');
 const router          = require('./routes/router');
 
 // initialize mongoose
-mongoose.connect(config.get('server.mongo'));
-const db = mongoose.connection;
-db.on('error', e => {console.error('Connection error: ', e); process.exit(1)});
-db.on('open', () => {
-  // express setup
-  const app = express();
+const startServer = () => {
+  mongoose.connect(config.get('server.mongo'));
+  const db = mongoose.connection;
+  db.on('error', e => {console.error('Connection error: ', e); process.exit(1)});
+  db.on('open', () => {
+    // express setup
+    const app = express();
 
-  // body parser
-  app.use(bodyParser.urlencoded({ extended: true }));
-  app.use(bodyParser.json());
+    // body parser
+    app.use(bodyParser.urlencoded({ extended: true }));
+    app.use(bodyParser.json());
 
-  // cookie parser
-  app.use(cookieParser());
+    // cookie parser
+    app.use(cookieParser());
 
-  app.use(flash());
+    app.use(flash());
 
-  // session management
-  app.use(
-    session({
-      secret: config.get('server.session.secret'),
-      resave: false,
-      saveUninitialized: false,
-      cookie: {
-        path: '/',
-        httpOnly: true,
-        maxAge: config.get('server.session.expiry')
-      },
-      store: new MongoSession({
-        mongooseConnection: db
+    // session management
+    app.use(
+      session({
+        secret: config.get('server.session.secret'),
+        resave: false,
+        saveUninitialized: false,
+        cookie: {
+          path: '/',
+          httpOnly: true,
+          maxAge: config.get('server.session.expiry')
+        },
+        store: new MongoSession({
+          mongooseConnection: db
+        })
       })
-    })
-  );
+    );
 
-  // request logging
-  app.use(morgan('dev'));
+    // request logging
+    app.use(morgan('dev'));
 
-  // static asset generation
-  handleStatic(app);
+    // static asset generation
+    handleStatic(app);
 
-  // setup passport authentication
-  auth.init(app);
+    // setup passport authentication
+    auth.init(app);
 
-  // Templating
-  app.set('views', 'frontend/html/');
-  app.engine('.hbs', exphbs({
-    defaultLayout: 'default',
-    extname: '.hbs',
-    layoutsDir: 'frontend/html/layouts/',
-    partialsDir: 'frontend/html/partials/',
-    helpers: {
-      title: config.get('app.name'),
-      ifdef: (variable, options) => {
-        if (typeof variable !== 'undefined') {
-          return options.fn(this);
+    // Templating
+    app.set('views', 'frontend/html/');
+    app.engine('.hbs', exphbs({
+      defaultLayout: 'default',
+      extname: '.hbs',
+      layoutsDir: 'frontend/html/layouts/',
+      partialsDir: 'frontend/html/partials/',
+      helpers: {
+        title: config.get('app.name'),
+        ifdef: (variable, options) => {
+          if (typeof variable !== 'undefined') {
+            return options.fn(this);
+          }
+          return options.inverse(this);
         }
-        return options.inverse(this);
       }
-    }
-  }));
+    }));
 
-  app.set('view engine', '.hbs');
+    app.set('view engine', '.hbs');
 
-  // include router at subdirectory specified in config.json
-  app.use('/', router);
+    // include router at subdirectory specified in config.json
+    app.use('/', router);
 
-  app.listen(config.get('server.port'));
-});
+    app.listen(config.get('server.port'));
+  });
+};
+if (require.main === module) {
+	// called directly from cli
+	startServer();
+} else {
+	// required by other file
+	module.exports = startServer;
+}
