@@ -17,7 +17,6 @@ router.get('/', (req, res) => {
 });
 
 router.get('/login', (req, res) => {
-  console.log(req.user);
   if (req.session.authenticated) {
     res.redirect('/dashboard');
     return;
@@ -26,15 +25,16 @@ router.get('/login', (req, res) => {
     loginFailed: (req.session.loginFailed || false),
     heading: 'Log In',
     layout: 'panel',
+    errors: req.flash('error')
   });
 });
 
 router.post('/login',
-  // authenticate with passport-local. TODO: req.flash
+  // authenticate with passport-local
   passport.authenticate('local', {
     successRedirect: '/dashboard',
     failureRedirect: '/login',
-    //failureFlash: true,
+    failureFlash: true,
   }),
   (req, res) => {
     // passport
@@ -59,7 +59,8 @@ router.post('/register', (req, res) => {
     req.body.password,
     (err, account) => {
       passport.authenticate('local')(req, res, () => {
-        res.send('register successful');
+        //res.send('register successful');
+        res.redirect('/dashboard');
       });
     }
   );
