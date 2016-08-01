@@ -47,7 +47,11 @@ router.get('/register', (req, res) => {
     res.redirect('/dashboard');
     return;
   }
-  res.render('register');
+  res.render('register', {
+    messages: {
+      error: req.flash('error')
+    }
+  });
 });
 
 router.post('/register', (req, res) => {
@@ -58,10 +62,16 @@ router.post('/register', (req, res) => {
     }),
     req.body.password,
     (err, account) => {
-      passport.authenticate('local')(req, res, () => {
-        //res.send('register successful');
-        res.redirect('/dashboard');
-      });
+      if (!err) {
+        passport.authenticate('local')(req, res, () => {
+          //res.send('register successful');
+          res.redirect('/dashboard');
+        });
+      } else {
+        console.log(err, account);
+        req.flash('error', err.message);
+        res.redirect('register');
+      }
     }
   );
 });
