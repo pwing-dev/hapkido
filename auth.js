@@ -38,6 +38,7 @@ passport.serializeUser((user, cb) => {
   } else if (user.provider === 'google') {
     cb(null, user);
   } else {
+    console.warn('No known provider');
     cb(null, user);
   }
 });
@@ -49,6 +50,7 @@ passport.deserializeUser((user, cb) => {
   } else if (user.provider === 'google') {
     cb(null, user);
   } else {
+    console.warn('No known provider');
     cb(null, user);
   }
 });

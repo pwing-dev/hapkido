@@ -29,18 +29,18 @@ router.get('/login', (req, res) => {
   });
 });
 
-router.post('/login',
+router.post('/login', (req, res, next) => {
   // authenticate with passport-local
-  passport.authenticate('local', {
-    successRedirect: '/dashboard',
-    failureRedirect: '/login',
-    failureFlash: true,
-  }),
-  (req, res) => {
-    // passport
-    res.redirect('/login');
-  }
-);
+  passport.authenticate('local',
+    (err, user, info) => {
+      if (err) { return next(err); }
+      if (!user) { return res.redirect('/login'); }
+      req.session.authenticated = true;
+      // Successful authentication, redirect home.
+      res.redirect('/dashboard');
+    }
+  )(req, res, next)
+});
 
 router.get('/register', (req, res) => {
   if (req.session.authenticated) {
@@ -65,6 +65,7 @@ router.post('/register', (req, res) => {
       if (!err) {
         passport.authenticate('local')(req, res, () => {
           //res.send('register successful');
+          req.session.authenticated = true;
           res.redirect('/dashboard');
         });
       } else {
@@ -101,6 +102,7 @@ router.use((req, res, next) => {
   if (req.session.authenticated) {
     next();
   } else {
+    console.log('Accessing a protected route although not authenticated');
     req.session.reqPreAuth = req.url; // store requested URL not allowed
     res.redirect('/login');
   }
