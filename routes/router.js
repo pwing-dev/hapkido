@@ -9,7 +9,7 @@ const router   = express.Router();
 const baseUrl  = url.parse(config.get('server.baseURL'));
 
 router.get('/', (req, res) => {
-  if (req.session.authenticated) {
+  if (req.isAuthenticated()) {
     res.redirect('/dashboard');
     return;
   }
@@ -17,7 +17,7 @@ router.get('/', (req, res) => {
 });
 
 router.get('/login', (req, res) => {
-  if (req.session.authenticated) {
+  if (req.isAuthenticated()) {
     res.redirect('/dashboard');
     return;
   }
@@ -29,21 +29,13 @@ router.get('/login', (req, res) => {
   });
 });
 
-router.post('/login', (req, res, next) => {
+router.post('/login',
   // authenticate with passport-local
-  passport.authenticate('local',
-    (err, user, info) => {
-      if (err) { return next(err); }
-      if (!user) { return res.redirect('/login'); }
-      req.session.authenticated = true;
-      // Successful authentication, redirect home.
-      res.redirect('/dashboard');
-    }
-  )(req, res, next)
-});
+  passport.authenticate('local', {successRedirect: '/dashboard', failureRedirect: '/login'})
+);
 
 router.get('/register', (req, res) => {
-  if (req.session.authenticated) {
+  if (req.isAuthenticated()) {
     res.redirect('/dashboard');
     return;
   }
@@ -65,7 +57,6 @@ router.post('/register', (req, res) => {
       if (!err) {
         passport.authenticate('local')(req, res, () => {
           //res.send('register successful');
-          req.session.authenticated = true;
           res.redirect('/dashboard');
         });
       } else {
@@ -82,12 +73,7 @@ router.get('/auth/google',
 );
 
 router.get(auth.googleCallbackPath,
-  passport.authenticate('google', { failureRedirect: '/login' }),
-  (req, res) => {
-    req.session.authenticated = true;
-    // Successful authentication, redirect home.
-    res.redirect('/dashboard');
-  }
+  passport.authenticate('google', { successRedirect: '/dashboard', failureRedirect: '/login' })
 );
 
 router.get('/logout', (req, res) => {
@@ -99,7 +85,7 @@ router.get('/logout', (req, res) => {
 
 // protect all following routes
 router.use((req, res, next) => {
-  if (req.session.authenticated) {
+  if (req.isAuthenticated()) {
     next();
   } else {
     console.log('Accessing a protected route although not authenticated');
