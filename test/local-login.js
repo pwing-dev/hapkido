@@ -48,7 +48,7 @@ describe('Local login', function() {
         .post('/register')
         .type('form')
         .send({username: 'test', password: 'test'})
-        .expect('location', 'register') // TODO why no slash?
+        .expect('location', '/register')
         .end(done);
     });
     it('no registration or login required', function(done) {

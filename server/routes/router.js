@@ -30,7 +30,10 @@ router.get('/login', (req, res) => {
 
 router.post('/login',
   // authenticate with passport-local
-  passport.authenticate('local', { successRedirect: '/dashboard', failureRedirect: '/login' })
+  passport.authenticate('local', {
+    successRedirect: '/dashboard', // TODO add support for req.session.redirectedFrom
+    failureRedirect: '/login'
+  })
 );
 
 router.get('/register', (req, res) => {
@@ -56,12 +59,15 @@ router.post('/register', (req, res) => {
       if (!err) {
         passport.authenticate('local')(req, res, () => {
           // res.send('register successful');
-          res.redirect('/dashboard');
+          if (req.session.redirectedFrom) {
+            res.redirect(req.session.redirectedFrom);
+          } else {
+            res.redirect('/dashboard');
+          }
         });
       } else {
-        console.log(err, account);
         req.flash('error', err.message);
-        res.redirect('register');
+        res.redirect('/register');
       }
     }
   );
@@ -72,7 +78,10 @@ router.get('/auth/google',
 );
 
 router.get(auth.googleCallbackPath,
-  passport.authenticate('google', { successRedirect: '/dashboard', failureRedirect: '/login' })
+  passport.authenticate('google', {
+    successRedirect: '/dashboard', // TODO add support for req.session.redirectedFrom
+    failureRedirect: '/login'
+  })
 );
 
 router.get('/logout', (req, res) => {
@@ -85,16 +94,20 @@ router.get('/logout', (req, res) => {
 // protect all following routes
 router.use((req, res, next) => {
   if (req.isAuthenticated()) {
-    next();
+    if (req.user && !req.user.initialized && req.path !== '/user/setup') {
+      req.session.redirectedFrom = req.url;
+      res.redirect('/user/setup');
+    } else {
+      next();
+    }
   } else {
     console.log('Accessing a protected route although not authenticated');
-    req.session.reqPreAuth = req.url; // store requested URL not allowed
+    req.session.redirectedFrom = req.url;
     res.redirect('/login');
   }
 });
 
-router.get('/dashboard', (req, res) => {
-  res.render('dashboard');
-});
+router.get('/dashboard', (req, res) => res.render('dashboard'));
+router.get('/user/setup', (req, res) => res.render('user/setup'));
 
 module.exports = router;
