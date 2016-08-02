@@ -2,7 +2,7 @@ const express   = require('express');
 const passport  = require('passport');
 
 const auth      = require('hapkido/server/auth');
-const LocalUser = require('hapkido/server/models/user/user-local');
+const Account = require('hapkido/server/models/account');
 
 const router   = express.Router();
 
@@ -46,8 +46,8 @@ router.get('/register', (req, res) => {
 
 router.post('/register', (req, res) => {
   // just for testing, TODO: create view
-  LocalUser.register(
-    new LocalUser({
+  Account.register(
+    new Account({
       username: req.body.username
     }),
     req.body.password,

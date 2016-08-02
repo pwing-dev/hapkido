@@ -1,6 +1,7 @@
-const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
-const ObjectId = Schema.Types.ObjectId;
+const mongoose     = require('mongoose');
+const findOrCreate = require('mongoose-findorcreate');
+const Schema       = mongoose.Schema;
+const ObjectId     = Schema.Types.ObjectId;
 
 const User = new Schema({
   auth: {
@@ -17,5 +18,6 @@ const User = new Schema({
   subscriptions: [ObjectId],
   contactInfos: [ObjectId]
 });
+User.plugin(findOrCreate);
 
-module.exports = User;
+module.exports = mongoose.model('User', User);

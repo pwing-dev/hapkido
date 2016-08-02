@@ -5,14 +5,32 @@ const LocalStrategy = require('passport-local').Strategy;
 const url           = require('url');
 const urljoin       = require('url-join');
 
-const LocalUser     = require('hapkido/server/models/user/user-local.js');
-const User          = require('hapkido/server/models/user/user.js');
+const Account       = require('hapkido/server/models/account');
+const User          = require('hapkido/server/models/user/user');
 
 const baseUrl       = url.parse(config.get('server.baseURL'));
 const googleCallbackPath = '/auth/google/callback';
 
 // LOCAL Strategy
-passport.use(new LocalStrategy(LocalUser.authenticate()));
+const mongooseAuthenticator = Account.authenticate();
+passport.use(
+  new LocalStrategy((username, password, done) =>
+    mongooseAuthenticator(username, password, (err, profile, message) => {
+      if (profile) { // login successful
+        User.findOrCreate(
+          {
+            auth: {
+              provider: 'local',
+              id: profile._id // TODO we can use username here as well. Which do we prefer?
+            }
+          }, (err, user, created) => done(err, user)
+        );
+      } else {
+        done(null, false, message);
+      }
+    })
+  )
+);
 
 // GOOGLE Strategy
 passport.use(new GoogleAuth(
@@ -21,37 +39,35 @@ passport.use(new GoogleAuth(
     clientSecret: config.get('server.auth.google.clientSecret'),
     callbackURL: urljoin(baseUrl.href, googleCallbackPath),
   },
-  (accessToken, refreshToken, profile, cb) => {
-    // TODO find user in our database and do the mapping
-    // User.findOrCreate({
-    //  googleId: profile.id
-    // }, (err, user) => {
-    return cb(null, profile);
-    // });
+  (accessToken, refreshToken, profile, done) => {
+    User.findOrCreate(
+      {
+        auth: {
+          provider: 'google',
+          id: profile.id
+        }
+      }, (err, user, created) => done(err, user)
+    );
   }
 ));
 
 // TODO see https://github.com/passport/express-4.x-facebook-example/blob/master/server.js#L28
 passport.serializeUser((user, cb) => {
-  console.log('Serializing user', user);
   if (user.provider === 'local') {
     LocalUser.serializeUser()(user, cb);
   } else if (user.provider === 'google') {
     cb(null, user);
   } else {
-    console.warn('No known provider');
     cb(null, user);
   }
 });
 
 passport.deserializeUser((user, cb) => {
-  console.log('Deserializing user', user);
   if (user.provider === 'local') {
     LocalUser.deserializeUser()(user, cb);
   } else if (user.provider === 'google') {
     cb(null, user);
   } else {
-    console.warn('No known provider');
     cb(null, user);
   }
 });

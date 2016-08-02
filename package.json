@@ -9,7 +9,7 @@
     "test": "npm run lint && npm run tests",
     "tests": "mocha test/*.js",
     "lint": "eslint index.js routes/*.js || true",
-    "postinstall" : "node -e \"try{require('fs').symlinkSync('../','node_modules/hapkido','dir')}catch(e){}\""
+    "postinstall": "node -e \"try{require('fs').symlinkSync('../','node_modules/hapkido','dir')}catch(e){}\""
   },
   "repository": {
     "type": "git",
@@ -30,6 +30,7 @@
     "express-middleware-rollup": "^1.1.0",
     "express-session": "^1.14.0",
     "mongoose": "^4.5.7",
+    "mongoose-findorcreate": "^0.1.2",
     "morgan": "^1.7.0",
     "node-sass-middleware": "^0.9.8",
     "passport": "^0.3.2",
