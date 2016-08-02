@@ -2,7 +2,7 @@ const express   = require('express');
 const passport  = require('passport');
 
 const auth      = require('hapkido/server/auth');
-const Account = require('hapkido/server/models/account');
+const Account   = require('hapkido/server/models/account');
 
 /* eslint-disable new-cap */
 const router   = express.Router();
@@ -109,5 +109,16 @@ router.use((req, res, next) => {
 
 router.get('/dashboard', (req, res) => res.render('dashboard'));
 router.get('/user/setup', (req, res) => res.render('user/setup'));
+
+router.use((req, res, next) => {
+  res.status(404);
+  if (req.accepts('html')) {
+    res.render('404', { url: req.url });
+  } else if (req.accepts('json')) {
+    res.send({ error: 'Not found' });
+  } else {
+    res.type('txt').send('Not found');
+  }
+});
 
 module.exports = router;
