@@ -1,0 +1,12 @@
+image: conferum/ci
+before_script:
+  - npm install
+
+test:
+  script:
+    - npm run tests
+
+lint:
+  script:
+    - npm run lint
+    allow_failure: true
