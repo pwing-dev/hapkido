@@ -4,6 +4,7 @@ const passport  = require('passport');
 const auth      = require('hapkido/server/auth');
 const Account = require('hapkido/server/models/account');
 
+/* eslint-disable new-cap */
 const router   = express.Router();
 
 router.get('/', (req, res) => {
@@ -54,7 +55,7 @@ router.post('/register', (req, res) => {
     (err, account) => {
       if (!err) {
         passport.authenticate('local')(req, res, () => {
-          //res.send('register successful');
+          // res.send('register successful');
           res.redirect('/dashboard');
         });
       } else {

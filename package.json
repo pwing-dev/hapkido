@@ -7,8 +7,8 @@
     "start": "node index.js",
     "start:dev": "nodemon -i static/\\* -i frontend/\\* -i test/\\* index.js",
     "test": "npm run lint && npm run tests",
-    "tests": "mocha test/*.js",
-    "lint": "eslint index.js routes/*.js || true",
+    "tests": "mocha test/\\*.js test/\\*\\*/\\*.js",
+    "lint": "eslint index.js server/\\*.js server/\\*\\*/\\*.js || true",
     "postinstall": "node -e \"try{require('fs').symlinkSync('../','node_modules/hapkido','dir')}catch(e){}\""
   },
   "repository": {

@@ -15,7 +15,7 @@ const googleCallbackPath = '/auth/google/callback';
 const mongooseAuthenticator = Account.authenticate();
 passport.use(
   new LocalStrategy((username, password, done) =>
-    mongooseAuthenticator(username, password, (err, profile, message) => {
+    mongooseAuthenticator(username, password, (authErr, profile, message) => {
       if (profile) { // login successful
         User.findOrCreate(
           {
@@ -23,10 +23,10 @@ passport.use(
               provider: 'local',
               id: profile._id // TODO we can use username here as well. Which do we prefer?
             }
-          }, (err, user, created) => done(err, user)
+          }, (err, user/* , created */) => done(err, user)
         );
       } else {
-        done(null, false, message);
+        done(authErr, false, message);
       }
     })
   )
@@ -46,19 +46,13 @@ passport.use(new GoogleAuth(
           provider: 'google',
           id: profile.id
         }
-      }, (err, user, created) => done(err, user)
+      }, (err, user/* , created */) => done(err, user)
     );
   }
 ));
 
-// TODO see https://github.com/passport/express-4.x-facebook-example/blob/master/server.js#L28
-passport.serializeUser((user, done) => {
-  done(null, user._id);
-});
-
-passport.deserializeUser((user, cb) => {
-  return User.findById(user, cb);
-});
+passport.serializeUser((user, done) => done(null, user._id));
+passport.deserializeUser((user, done) => User.findById(user, done));
 
 module.exports = {
   init: app => {
