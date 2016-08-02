@@ -52,24 +52,12 @@ passport.use(new GoogleAuth(
 ));
 
 // TODO see https://github.com/passport/express-4.x-facebook-example/blob/master/server.js#L28
-passport.serializeUser((user, cb) => {
-  if (user.provider === 'local') {
-    LocalUser.serializeUser()(user, cb);
-  } else if (user.provider === 'google') {
-    cb(null, user);
-  } else {
-    cb(null, user);
-  }
+passport.serializeUser((user, done) => {
+  done(null, user._id);
 });
 
 passport.deserializeUser((user, cb) => {
-  if (user.provider === 'local') {
-    LocalUser.deserializeUser()(user, cb);
-  } else if (user.provider === 'google') {
-    cb(null, user);
-  } else {
-    cb(null, user);
-  }
+  return User.findById(user, cb);
 });
 
 module.exports = {
