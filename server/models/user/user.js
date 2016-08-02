@@ -3,8 +3,11 @@ const Schema = mongoose.Schema;
 const ObjectId = Schema.Types.ObjectId;
 
 const User = new Schema({
-  provider: String,
-  id: String,
+  auth: {
+    provider: String,
+    id: String
+  },
+  initialized: Boolean,
   displayName: String,
   room: String,
   avatar: ObjectId, // Asset
