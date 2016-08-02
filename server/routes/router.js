@@ -2,7 +2,7 @@ const express   = require('express');
 const passport  = require('passport');
 
 const auth      = require('hapkido/server/auth');
-const LocalUser = require('hapkido/models/user/user-local');
+const LocalUser = require('hapkido/server/models/user/user-local');
 
 const router   = express.Router();
 

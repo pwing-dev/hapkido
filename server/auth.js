@@ -5,8 +5,8 @@ const LocalStrategy = require('passport-local').Strategy;
 const url           = require('url');
 const urljoin       = require('url-join');
 
-const LocalUser     = require('hapkido/models/user/user-local.js');
-const User          = require('hapkido/models/user/user.js');
+const LocalUser     = require('hapkido/server/models/user/user-local.js');
+const User          = require('hapkido/server/models/user/user.js');
 
 const baseUrl       = url.parse(config.get('server.baseURL'));
 const googleCallbackPath = '/auth/google/callback';
