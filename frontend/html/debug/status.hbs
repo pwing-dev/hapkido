@@ -1,1 +1,17 @@
-Nothing to see here
+<pre>
+{{title}} | Status page
+
+{{#if req.user}}
+  You are logged in with user {{req.user._id}}
+  {{#if req.user.initialized}}
+    which is initialized
+    Here is your user data:
+    displayName: {{req.user.displayName}}
+    room: {{req.user.room}}
+  {{else}}
+    which is not initialized
+  {{/if}}
+{{else}}
+  You are not logged in
+{{/if}}
+</pre>
