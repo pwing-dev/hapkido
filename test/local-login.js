@@ -17,7 +17,7 @@ describe('Local login', function() {
     mockgoose(mongoose)
       .then(
         () => {
-          LocalUser = proxyquire(`hapkido/server/models/user/user-local`, { 'mongoose': mongoose });
+          LocalUser = proxyquire(`hapkido/server/models/account`, { 'mongoose': mongoose });
           // create an app instance
           return proxyquire(`hapkido`, { 'mongoose': mongoose })();
         }, e => Promise.reject(e)
