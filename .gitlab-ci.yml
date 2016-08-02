@@ -1,12 +1,19 @@
-image: conferum/ci
+image: mkenney/npm
 before_script:
   - npm install
+  - ln -s . node_modules/hapkido
 
 test:
   script:
     - npm run tests
+  cache:
+    paths:
+      - node_modules/
 
 lint:
   script:
     - npm run lint
-    allow_failure: true
+  allow_failure: true
+  cache:
+    paths:
+      - node_modules/

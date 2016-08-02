@@ -9,7 +9,7 @@
     "test": "npm run lint && npm run tests",
     "tests": "mocha test/\\*.js test/\\*\\*/\\*.js",
     "lint": "eslint index.js server/\\*.js server/\\*\\*/\\*.js || true",
-    "postinstall": "node -e \"try{require('fs').symlinkSync('../','node_modules/hapkido','dir')}catch(e){}\""
+    "postinstall": "node -e \"try{require('fs').symlinkSync(require('path').resolve('./'),'node_modules/hapkido','dir')}catch(e){}\""
   },
   "repository": {
     "type": "git",
