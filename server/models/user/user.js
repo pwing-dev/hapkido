@@ -8,15 +8,16 @@ const User = new Schema({
     provider: String,
     id: String
   },
-  initialized: Boolean,
+  initialized: {type: Boolean, default: false},
   displayName: String,
-  room: String,
+  room: ObjectId, // a Lease for a room
   avatar: ObjectId, // Asset
   organizations: [ObjectId],
   roles: [ObjectId],
   services: [ObjectId],
   subscriptions: [ObjectId],
-  contactInfos: [ObjectId]
+  contactInfos: [ObjectId],
+  leases: [ObjectId]
 });
 User.plugin(findOrCreate);
 
