@@ -12,6 +12,10 @@
         "clientId": "501213114870-17hitfqiibdeiqdab3kvg87mcjp3b7fs.apps.googleusercontent.com",
         "clientSecret": "LdaLDC_xadOmTIPirNJ24Jc3"
       }
+    },
+    "debug": {
+      "routes": true,
+      "verbosity": 0
     }
   },
   "app": {

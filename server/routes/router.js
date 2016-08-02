@@ -1,11 +1,16 @@
 const express   = require('express');
 const passport  = require('passport');
+const config    = require('config');
 
 const auth      = require('hapkido/server/auth');
+const debug     = require('hapkido/server/routes/debug');
 const Account   = require('hapkido/server/models/account');
 
 /* eslint-disable new-cap */
 const router   = express.Router();
+if (config.server.debug.routes) {
+  debug(router);
+}
 
 router.get('/', (req, res) => {
   if (req.isAuthenticated()) {
