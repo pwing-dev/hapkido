@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "start:dev": "nodemon -i static/\\* -i frontend/\\* index.js",
-    "test": "npm run lint",
+    "start:dev": "nodemon -i static/\\* -i frontend/\\* -i test/\\* index.js",
+    "test": "npm run lint && npm run tests",
+    "tests": "mocha test/*.js",
     "lint": "eslint index.js routes/*.js || true",
     "postinstall" : "node -e \"try{require('fs').symlinkSync('../','node_modules/hapkido','dir')}catch(e){}\""
   },
@@ -40,12 +41,17 @@
     "url-join": "^1.1.0"
   },
   "devDependencies": {
+    "chai": "^3.5.0",
     "eslint": "^2.13.1",
     "eslint-config-airbnb": "^9.0.1",
     "eslint-plugin-import": "^1.12.0",
     "eslint-plugin-jsx-a11y": "^1.2.0",
     "eslint-plugin-node": "^2.0.0",
     "eslint-plugin-react": "^5.2.2",
-    "nodemon": "^1.10.0"
+    "mocha": "^3.0.0",
+    "mockgoose": "^6.0.3",
+    "nodemon": "^1.10.0",
+    "proxyquire": "^1.7.10",
+    "supertest": "^2.0.0"
   }
 }
