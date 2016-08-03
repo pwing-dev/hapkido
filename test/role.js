@@ -6,6 +6,7 @@ const expect       = chai.expect;
 describe('Role', function() {
   let role;
   before(function(done) {
+    this.timeout(0); // setup can take a little longer if cold
     mockgoose(mongoose).then(() => {
       role = require('requirefrom')('server/models/user')('role');
       done();
