@@ -1,7 +1,6 @@
 image: mkenney/npm
 before_script:
   - npm install
-  - ln -s . node_modules/hapkido
 
 test:
   script:
