@@ -1,17 +1,17 @@
-const express    = require('express');
-const passport   = require('passport');
-const config     = require('config');
+const express     = require('express');
+const passport    = require('passport');
+const config      = require('config');
 
-const apprequire = require('requirefrom')('server');
-const auth       = apprequire('auth');
-const debug      = apprequire('routes/debug');
-const Account    = apprequire('models/account');
-const userRoutes = apprequire('routes/user');
+const apprequire  = require('requirefrom')('server');
+const auth        = apprequire('auth');
+const debugRoutes = apprequire('routes/debug');
+const Account     = apprequire('models/account');
+const userRoutes  = apprequire('routes/user');
 
 /* eslint-disable new-cap */
 const router   = express.Router();
 if (config.server.debug.routes) {
-  debug(router);
+  router.use('/debug', debugRoutes);
 }
 
 router.get('/', (req, res) => {
