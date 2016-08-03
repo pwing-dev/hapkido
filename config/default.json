@@ -13,6 +13,10 @@
         "clientSecret": "LdaLDC_xadOmTIPirNJ24Jc3"
       }
     },
+    "recaptcha": {
+      "site_key": "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI",
+      "secret_key": "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe"
+    },
     "debug": {
       "routes": true,
       "verbosity": 0

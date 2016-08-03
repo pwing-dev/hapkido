@@ -1,12 +1,15 @@
 const express     = require('express');
 const passport    = require('passport');
 const config      = require('config');
+const recaptcha   = require('express-recaptcha');
 
 const apprequire  = require('requirefrom')('server');
 const auth        = apprequire('auth');
 const debugRoutes = apprequire('routes/debug');
 const Account     = apprequire('models/account');
 const userRoutes  = apprequire('routes/user');
+
+recaptcha.init(config.get('server.recaptcha.site_key'), config.get('server.recaptcha.secret_key'));
 
 /* eslint-disable new-cap */
 const router   = express.Router();
@@ -43,41 +46,48 @@ router.post('/login',
   })
 );
 
-router.get('/register', (req, res) => {
+router.get('/register', recaptcha.middleware.render, (req, res) => {
   if (req.isAuthenticated()) {
     res.redirect('/dashboard');
     return;
   }
   res.render('register', {
+    elements: {
+      captcha: req.recaptcha,
+    },
     messages: {
       error: req.flash('error')
     }
   });
 });
 
-router.post('/register', (req, res) => {
-  // just for testing, TODO: create view
-  Account.register(
-    new Account({
-      username: req.body.username
-    }),
-    req.body.password,
-    (err, account) => {
-      if (!err) {
-        passport.authenticate('local')(req, res, () => {
-          // res.send('register successful');
-          if (req.session.redirectedFrom) {
-            res.redirect(req.session.redirectedFrom);
-          } else {
-            res.redirect('/dashboard');
-          }
-        });
-      } else {
-        req.flash('error', err.message);
-        res.redirect('/register');
+router.post('/register', recaptcha.middleware.verify, (req, res) => {
+  if (!req.recaptcha.error){
+    // just for testing, TODO: create view
+    Account.register(
+      new Account({
+        username: req.body.username
+      }),
+      req.body.password,
+      (err) => {
+        if (!err) {
+          passport.authenticate('local')(req, res, () => {
+            // res.send('register successful');
+            if (req.session.redirectedFrom) {
+              res.redirect(req.session.redirectedFrom);
+            } else {
+              res.redirect('/dashboard');
+            }
+          });
+        } else {
+          req.flash('error', err.message);
+          res.redirect('/register');
+        }
       }
-    }
-  );
+    );
+  } else {
+    res.send(403); // TODO more verbosity
+  }
 });
 
 router.get('/auth/google',
