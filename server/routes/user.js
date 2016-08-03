@@ -3,6 +3,7 @@ const config     = require('config');
 
 const apprequire = require('requirefrom')('server');
 const Request    = apprequire('models/organization/request');
+const User       = apprequire('models/user/user');
 
 /* eslint-disable new-cap */
 const user   = express.Router();
@@ -10,25 +11,28 @@ const user   = express.Router();
 // user is mounted at /user/*
 
 user.get('/setup', (req, res) => {
-  res.render('user/setup', {
-    heading: 'Account Setup',
-    layout: 'panel'
-  });
+  if (req.user.initialized) {
+    res.send(403);
+  } else {
+    res.render('user/setup', {
+      heading: 'Account Setup',
+      layout: 'panel'
+    });
+  }
 });
 
 user.post('/setup', (req, res) => {
   if (req.user.initialized) {
     res.send(403); // TODO: .render('error403');
   } else {
-    req.user = {
+    User.findByIdAndUpdate(req.user._id, {
       initialized: true,
       displayName: req.body.displayName,
-    };
-    req.user.save();
+    }, (err) => { if (err) throw err; });
     Request.create({
       sender: req.user._id,
       // subject: TODO,
-      message: `${res.user.displayName} wants to lease ${req.body.room}`,
+      message: `${req.user.displayName} wants to lease ${req.body.room}`,
       status: 'pending',
     }, (err) => {
       if (err) {
