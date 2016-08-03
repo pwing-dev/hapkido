@@ -13,7 +13,7 @@ const User = new Schema({
   room: ObjectId, // a Lease for a room
   avatar: ObjectId, // Asset
   organizations: [ObjectId],
-  roles: [ObjectId],
+  roles: [{type: ObjectId, ref: 'Role'}],
   services: [ObjectId],
   subscriptions: [ObjectId],
   contactInfos: [ObjectId],

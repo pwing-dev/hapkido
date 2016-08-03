@@ -1,0 +1,19 @@
+<pre>
+{{#if user}}
+  {{#if isAdmin}}
+    You are an admin
+    <form role="form" action="/debug/admin" method="post">
+      <input type="hidden" name="deescalate" value="true"></input>
+      <button type="submit">But I don't want to be an admin :(</button>
+    </form>
+  {{else}}
+    You are not an admin
+    <form role="form" action="/debug/admin" method="post">
+      <input type="hidden" name="escalate" value="true"></input>
+      <button type="submit">Make me an admin!</button>
+    </form>
+  {{/if}}
+{{else}}
+  You are not logged in
+{{/if}}
+</pre>
