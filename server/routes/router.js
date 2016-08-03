@@ -1,10 +1,11 @@
-const express   = require('express');
-const passport  = require('passport');
-const config    = require('config');
+const express    = require('express');
+const passport   = require('passport');
+const config     = require('config');
 
-const auth      = require('hapkido/server/auth');
-const debug     = require('hapkido/server/routes/debug');
-const Account   = require('hapkido/server/models/account');
+const apprequire = require('requirefrom')('server');
+const auth       = apprequire('auth');
+const debug      = apprequire('routes/debug');
+const Account    = apprequire('models/account');
 
 /* eslint-disable new-cap */
 const router   = express.Router();

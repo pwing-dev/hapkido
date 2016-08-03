@@ -10,9 +10,10 @@ const MongoSession    = require('connect-mongo')(session);
 const flash           = require('connect-flash');
 const path            = require('path');
 
-const auth            = require('hapkido/server/auth');
-const handleStatic    = require('hapkido/server/static');
-const router          = require('hapkido/server/routes/router');
+const apprequire      = require('requirefrom')('server');
+const auth            = apprequire('auth');
+const handleStatic    = apprequire('static');
+const router          = apprequire('routes/router');
 
 const createServer = () => new Promise((resolve, reject) => {
   // initialize mongoose

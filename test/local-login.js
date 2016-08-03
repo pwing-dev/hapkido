@@ -10,16 +10,18 @@ const expect       = chai.expect;
 // everywhere. Thank you
 
 describe('Local login', function() {
-  let LocalUser;
+  let Account;
   let app;
   let request;
   before(function(done) {
+    this.timeout(0); // setup can take a little longer if cold
     mockgoose(mongoose)
       .then(
         () => {
-          LocalUser = proxyquire(`hapkido/server/models/account`, { 'mongoose': mongoose });
+          const mockgooserequirefrom = proxyquire('requirefrom', { 'mongoose': mongoose });
+          Account = mockgooserequirefrom('server/models')('account');
           // create an app instance
-          return proxyquire(`hapkido`, { 'mongoose': mongoose })();
+          return mockgooserequirefrom('server')('server')();
         }, e => Promise.reject(e)
       ).then(server => { app = server; request = supertest(app); done() }, done);
   });
