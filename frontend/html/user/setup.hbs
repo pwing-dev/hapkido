@@ -1,4 +1,6 @@
-<h1>User account setup</h1>
-<form action="/logout">
-  <button type="submit">Cancel</button>
+<form role="form" method="post" action="/user/setup">
+  <input placeholder="Nickname" name="displayName" type="username" required autofocus>
+  <input placeholder="Room Number" name="room" type="number" required>
+  <button type="submit">Submit</button>
 </form>
+<button href="/logout">Cancel</button>

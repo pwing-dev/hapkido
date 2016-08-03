@@ -10,4 +10,4 @@ const Request = new Schema({
   status: String // 'pending', 'accepted' or 'declined'
 });
 
-module.exports = Request;
+module.exports = mongoose.model('Request', Request);

@@ -6,6 +6,7 @@ const apprequire = require('requirefrom')('server');
 const auth       = apprequire('auth');
 const debug      = apprequire('routes/debug');
 const Account    = apprequire('models/account');
+const userRoutes = apprequire('routes/user');
 
 /* eslint-disable new-cap */
 const router   = express.Router();
@@ -114,7 +115,8 @@ router.use((req, res, next) => {
 });
 
 router.get('/dashboard', (req, res) => res.render('dashboard'));
-router.get('/user/setup', (req, res) => res.render('user/setup'));
+
+router.use('/user', userRoutes);
 
 router.use((req, res, next) => {
   res.status(404);
