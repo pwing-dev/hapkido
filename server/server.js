@@ -17,6 +17,7 @@ const router          = apprequire('routes/router');
 
 const createServer = () => new Promise((resolve, reject) => {
   // initialize mongoose
+  mongoose.Promise = Promise;
   mongoose.connect(config.get('server.mongo'));
   const db = mongoose.connection;
   db.on('error', e => reject(e));
