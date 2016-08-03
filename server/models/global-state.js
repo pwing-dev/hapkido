@@ -26,20 +26,4 @@ const injectState = (() => {
 })();
 
 module.exports = {
-  acquireNewRoleId: callback => {
-    injectState((err1, state) => {
-      if (err1) {
-        callback(err1);
-        return;
-      }
-      const id = state.nextRoleId++;
-      state.save(err2 => {
-        if (err2) {
-          callback(err2);
-          return;
-        }
-        callback(null, id);
-      });
-    });
-  }
 };

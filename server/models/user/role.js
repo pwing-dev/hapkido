@@ -2,21 +2,21 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const findOrCreate = require('mongoose-findorcreate');
 
-const RESERVED_IDS = {
-  GOD: 0,
+const SPECIAL_GLOBAL_ROLES = {
+  GOD: 1,
   ADMIN: 10,
 };
 
 
 const Role = new Schema({
-  id: Number,
+  _specialGlobal: {type: Number, default: 0},
   name: String,
   visibility: String
 });
 
 Role.plugin(findOrCreate);
 Role.statics.findAdmin = function(callback) {
-  this.findOrCreate({id: RESERVED_IDS.ADMIN}, (err, doc) => {
+  this.findOrCreate({_specialGlobal: SPECIAL_GLOBAL_ROLES.ADMIN, name: 'admin', visibility: 'private'}, (err, doc) => {
     if (err) {
       callback(err);
       return;
