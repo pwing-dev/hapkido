@@ -3,6 +3,8 @@ const cookieParser    = require('cookie-parser');
 const bodyParser      = require('body-parser');
 const session         = require('express-session');
 const exphbs          = require('express-handlebars');
+const handlebars      = require('handlebars');
+const hbsrender       = require('handlebars-render-helper');
 const morgan          = require('morgan');
 const config          = require('config');
 const mongoose        = require('mongoose');
@@ -70,13 +72,15 @@ const createServer = () => new Promise((resolve, reject) => {
       layoutsDir: path.join(frontendDir, '/html/layouts/'),
       partialsDir: path.join(frontendDir, '/html/partials/'),
       helpers: {
+        'handlebars': handlebars,
         title: config.get('app.name'),
+        render: hbsrender(handlebars),
         ifdef: (variable, options) => {
           if (typeof variable !== 'undefined') {
             return options.fn(this);
           }
           return options.inverse(this);
-        }
+        },
       }
     }));
 

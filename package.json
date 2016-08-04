@@ -29,6 +29,7 @@
     "express-middleware-rollup": "^1.1.0",
     "express-recaptcha": "^2.0.0",
     "express-session": "^1.14.0",
+    "handlebars-render-helper": "^1.0.0",
     "mongoose": "^4.5.7",
     "mongoose-findorcreate": "^0.1.2",
     "morgan": "^1.7.0",
