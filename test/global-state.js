@@ -3,23 +3,23 @@ const mockgoose    = require('mockgoose');
 const chai         = require('chai');
 const expect       = chai.expect;
 
-describe('Role', function() {
-  let role;
+describe('Global State', function() {
+  let api;
   before(function(done) {
     this.timeout(0); // setup can take a little longer if cold
     mockgoose(mongoose).then(() => {
       mongoose.Promise = Promise;
       mongoose.connect('');
-      role = require('requirefrom')('server/models/user')('role');
+      api = require('requirefrom')('server/models')('global-state');
       done();
     }, done);
   });
-  describe('get admin role', function() {
-    it('is special and named', function(done) {
-      role.findAdmin((err, admin) => {
+  describe('check initialization', function() {
+    it('is initially false', function(done) {
+      api.isInitialized((err, initialized) => {
         try {
-          expect(admin).to.have.property('_specialGlobal').that.is.not.equal(0);
-          expect(admin).to.have.property('name', 'admin');
+          expect(err).to.be.null;
+          expect(initialized).to.equal(false);
           done();
         } catch(e) {
           done(e);

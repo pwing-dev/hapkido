@@ -3,7 +3,7 @@ const findOrCreate = require('mongoose-findorcreate');
 const Schema       = mongoose.Schema;
 
 const GlobalState = new Schema({
-  nextRoleId: {type: Number, default: 1000} // first 1000 roles are reserved
+  initialized: {type: Boolean, default: false}
 });
 GlobalState.plugin(findOrCreate);
 
@@ -26,4 +26,5 @@ const injectState = (() => {
 })();
 
 module.exports = {
+  isInitialized: callback => injectState((err, state) => err ? callback(err) : callback(null, state.initialized)),
 };

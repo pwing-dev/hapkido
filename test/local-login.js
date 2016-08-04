@@ -85,4 +85,7 @@ describe('Local login', function() {
         });
     });
   });
+  after(function() {
+    mongoose.unmock();
+  });
 });
