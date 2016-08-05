@@ -13,7 +13,7 @@ describe('Global State', function() {
   });
   describe('check initialization', function() {
     it('is initially false', function(done) {
-      api.isInitialized((err, initialized) => {
+      api.isSetupComplete((err, initialized) => {
         try {
           expect(err).to.be.null;
           expect(initialized).to.equal(false);

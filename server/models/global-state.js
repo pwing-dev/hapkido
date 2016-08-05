@@ -3,7 +3,7 @@ const findOrCreate = require('mongoose-findorcreate');
 const Schema       = mongoose.Schema;
 
 const GlobalState = new Schema({
-  initialized: {type: Boolean, default: false}
+  setupComplete: {type: Boolean, default: false}
 });
 GlobalState.plugin(findOrCreate);
 
@@ -26,5 +26,5 @@ const injectState = (() => {
 })();
 
 module.exports = {
-  isInitialized: callback => injectState((err, state) => err ? callback(err) : callback(null, state.initialized)),
+  isSetupComplete: callback => injectState((err, state) => err ? callback(err) : callback(null, state.setupComplete)),
 };
