@@ -5,6 +5,8 @@ const session         = require('express-session');
 const exphbs          = require('express-handlebars');
 const handlebars      = require('handlebars');
 const hbsrender       = require('handlebars-render-helper');
+const hbsi18n         = require('handlebars-helper-i18n');
+const i18n            = require('i18n');
 const morgan          = require('morgan');
 const config          = require('config');
 const mongoose        = require('mongoose');
@@ -35,6 +37,25 @@ const createServer = () => new Promise((resolve, reject) => {
     app.use(cookieParser());
 
     app.use(flash());
+    // i18n
+    i18n.configure({
+      locales: ['en', 'de'],
+      fallbacks: {
+        de: 'en'
+      },
+      defaultLocale: 'en',
+      cookie: 'locale',
+      queryParameter: 'lang',
+      directory: path.join(__dirname, '../frontend/locales'),
+      directoryPermissions: '755',
+      autoReload: true,
+      updateFiles: true,
+      api: {
+        '__': '__',  // now req.__ becomes req.__
+        '__n': '__n' // and req.__n can be called as req.__n
+      }
+    });
+    app.use(i18n.init);
 
     // session management
     app.use(
@@ -73,8 +94,16 @@ const createServer = () => new Promise((resolve, reject) => {
       extname: '.hbs',
       layoutsDir: path.join(frontendDir, '/html/layouts/'),
       partialsDir: path.join(frontendDir, '/html/partials/'),
+      'handlebars': handlebars,
       helpers: {
-        'handlebars': handlebars,
+        helpers: {
+          __: function(){
+            return i18n.__.apply(this, arguments);
+          },
+          __n: function(){
+            return i18n.__n.apply(this, arguments);
+          }
+        },
         title: config.get('app.name'),
         render: hbsrender(handlebars),
         ifdef: (variable, options) => {
