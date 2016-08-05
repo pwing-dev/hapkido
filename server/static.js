@@ -4,30 +4,36 @@ const sass    = require('node-sass-middleware');
 const buble   = require('rollup-plugin-buble');
 const appRoot = require('app-root-path').toString();
 
-module.exports = app => {
-  // Javascript compilation
-  app.use(rollup({
-    src: 'frontend/js',
-    dest: 'static/js',
-    root: appRoot,
-    prefix: '/js',
-    rollupOpts: {
-      plugins: [buble()]
-    }
-  }));
+const composeMiddlewares = (...middlewares) => middlewares.reduce(
+  (a, b) =>
+    (req, res, next) =>
+      a(req, res, err => err ? next(err) : b(req, res, next))
+);
 
-  // Css compilation
-  app.use(sass({
-    root: appRoot,
-    src: 'frontend/css',
-    dest: 'static/css',
-    outputStyle: 'extended',
-    prefix: '/css',
-    includePaths: [
-      `${appRoot}/node_modules`
-    ]
-  }));
+// Javascript compilation
+const js = rollup({
+  src: 'frontend/js',
+  dest: 'static/js',
+  root: appRoot,
+  prefix: '/js',
+  rollupOpts: {
+    plugins: [buble()]
+  }
+});
 
-  // Static file server
-  app.use(express.static(`${appRoot}/static`));
-};
+// Css compilation
+const scss = sass({
+  root: appRoot,
+  src: 'frontend/css',
+  dest: 'static/css',
+  outputStyle: 'extended',
+  prefix: '/css',
+  includePaths: [
+    `${appRoot}/node_modules`
+  ]
+});
+
+// Static file server
+const statics = express.static(`${appRoot}/static`);
+
+module.exports = composeMiddlewares(js, scss, statics);

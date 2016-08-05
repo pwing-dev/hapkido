@@ -14,7 +14,7 @@ const path            = require('path');
 
 const apprequire      = require('requirefrom')('server');
 const auth            = apprequire('auth');
-const handleStatic    = apprequire('static');
+const assets          = apprequire('static');
 const router          = apprequire('routes/router');
 
 const createServer = () => new Promise((resolve, reject) => {
@@ -59,7 +59,7 @@ const createServer = () => new Promise((resolve, reject) => {
     }
 
     // static asset generation
-    handleStatic(app);
+    app.use(assets);
 
     // setup passport authentication
     auth.init(app);
