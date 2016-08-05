@@ -1,15 +1,12 @@
-const mongoose     = require('mongoose');
-const mockgoose    = require('mockgoose');
 const chai         = require('chai');
 const expect       = chai.expect;
+const helpers      = require('./helpers');
 
 describe('Global State', function() {
   let api;
   before(function(done) {
     this.timeout(0); // setup can take a little longer if cold
-    mockgoose(mongoose).then(() => {
-      mongoose.Promise = Promise;
-      mongoose.connect('');
+    helpers.mockgoose(true).then(() => {
       api = require('requirefrom')('server/models')('global-state');
       done();
     }, done);
@@ -28,6 +25,6 @@ describe('Global State', function() {
     });
   });
   after(function() {
-    mongoose.unmock();
+    helpers.unmockgoose();
   });
 });

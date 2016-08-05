@@ -20,6 +20,9 @@
     "debug": {
       "routes": true,
       "verbosity": 0
+    },
+    "logging": {
+      "enabled": true
     }
   },
   "app": {

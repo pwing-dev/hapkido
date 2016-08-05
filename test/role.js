@@ -1,15 +1,13 @@
-const mongoose     = require('mongoose');
-const mockgoose    = require('mockgoose');
 const chai         = require('chai');
 const expect       = chai.expect;
+const helpers      = require('./helpers');
 
 describe('Role', function() {
   let role;
   before(function(done) {
+    
     this.timeout(0); // setup can take a little longer if cold
-    mockgoose(mongoose).then(() => {
-      mongoose.Promise = Promise;
-      mongoose.connect('');
+    helpers.mockgoose(true).then(() => {
       role = require('requirefrom')('server/models/user')('role');
       done();
     }, done);
@@ -28,6 +26,6 @@ describe('Role', function() {
     });
   });
   after(function() {
-    mongoose.unmock();
+    helpers.unmockgoose();
   });
 });

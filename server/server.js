@@ -54,7 +54,9 @@ const createServer = () => new Promise((resolve, reject) => {
     );
 
     // request logging
-    app.use(morgan('dev'));
+    if (config.get('server.logging.enabled')) {
+      app.use(morgan('dev'));
+    }
 
     // static asset generation
     handleStatic(app);
