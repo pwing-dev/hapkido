@@ -5,7 +5,7 @@ const mongoose     = require('mongoose');
 const requireFrom  = require('requirefrom');
 
 const expect       = chai.expect;
-const helpers      = require('./helpers');
+const helpers      = require('requirefrom')('test')('helpers');
 
 // ATTENTION mocha binds `this` to some test case object, but this doesn't
 // work with (arrow) => {functions}. So please use normal function s() {}
