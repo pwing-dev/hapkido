@@ -39,9 +39,9 @@ module.exports = app => {
   passport.deserializeUser((user, done) => done(active ? null : 'pass', user));
 
   // initialize IP filter
-  setuptool.use(ipFilter(config.get('server.ipRanges.setup'), {
+  setuptool.use(ipFilter(config.get('setuptool.whitelist'), {
     mode: 'allow',
-    log: config.get('server.debug.verbosity') > 0,
+    log: config.get('debug.verbosity') > 0,
   }));
 
   setuptool.get('/login', (req, res) => {

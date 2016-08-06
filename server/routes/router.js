@@ -9,11 +9,11 @@ const debugRoutes = apprequire('routes/debug');
 const Account     = apprequire('models/account');
 const userRoutes  = apprequire('routes/user');
 
-recaptcha.init(config.get('server.recaptcha.site_key'), config.get('server.recaptcha.secret_key'));
+recaptcha.init(config.get('recaptcha.site_key'), config.get('recaptcha.secret_key'));
 
 /* eslint-disable new-cap */
 const router   = express.Router();
-if (config.server.debug.routes) {
+if (config.get('debug.routes')) {
   router.use('/debug', debugRoutes);
 }
 

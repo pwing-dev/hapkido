@@ -10,7 +10,7 @@ const models        = require('requirefrom')('server/models');
 const Account       = models('account');
 const User          = models('user/user');
 
-const baseUrl       = url.parse(config.get('server.baseURL'));
+const baseUrl       = url.parse(config.get('baseURL'));
 const googleCallbackPath = '/auth/google/callback';
 
 module.exports = {
@@ -38,8 +38,8 @@ module.exports = {
     // GOOGLE Strategy
     passport.use(new GoogleAuth(
       {
-        clientID: config.get('server.auth.google.clientId'),
-        clientSecret: config.get('server.auth.google.clientSecret'),
+        clientID: config.get('auth.google.clientId'),
+        clientSecret: config.get('auth.google.clientSecret'),
         callbackURL: urljoin(baseUrl.href, googleCallbackPath),
       },
       (accessToken, refreshToken, profile, done) =>

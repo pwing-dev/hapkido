@@ -26,7 +26,7 @@ const setuptool       = apprequire('setuptool');
 const createServer = () => new Promise((resolve, reject) => {
   // initialize mongoose
   mongoose.Promise = Promise;
-  mongoose.connect(config.get('server.mongo'));
+  mongoose.connect(config.get('mongo'));
   const db = mongoose.connection;
   db.on('error', e => reject(e));
   db.on('open', () => {
@@ -41,9 +41,9 @@ const createServer = () => new Promise((resolve, reject) => {
     app.use(cookieParser());
 
     // IP Filter
-    app.use(ipFilter(config.get('server.ipRanges.app'), {
+    app.use(ipFilter(config.get('whitelist'), {
       mode: 'allow',
-      log: config.get('server.debug.verbosity') > 0,
+      log: config.get('debug.verbosity') > 0,
     }));
 
     // flash message support on responses
@@ -71,13 +71,13 @@ const createServer = () => new Promise((resolve, reject) => {
     // session management
     app.use(
       session({
-        secret: config.get('server.session.secret'),
+        secret: config.get('session.secret'),
         resave: false,
         saveUninitialized: false,
         cookie: {
           path: '/',
           httpOnly: true,
-          maxAge: config.get('server.session.expiry')
+          maxAge: config.get('session.expiry')
         },
         store: new MongoSession({
           mongooseConnection: db
@@ -86,7 +86,7 @@ const createServer = () => new Promise((resolve, reject) => {
     );
 
     // request logging
-    if (config.get('server.logging.enabled')) {
+    if (config.get('logging.enabled')) {
       app.use(morgan('dev'));
     }
 
@@ -112,7 +112,7 @@ const createServer = () => new Promise((resolve, reject) => {
             return i18n.__n.apply(this, arguments);
           }
         },
-        title: config.get('app.name'),
+        title: 'hapkido',
         render: hbsrender(handlebars),
         ifdef: (variable, options) => {
           if (typeof variable !== 'undefined') {

@@ -5,10 +5,10 @@ const globalState = require('requirefrom')('server/models')('global-state');
 
 module.exports = {
   disableLogging: () => {
-    config.server.logging.enabled = false;
+    config.logging.enabled = false;
   },
   grecaptchaTestMode: () => {
-    config.server.recaptcha = {
+    config.recaptcha = {
       site_key: '6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI',
       secret_key: '6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe',
     };
@@ -38,7 +38,7 @@ module.exports = {
     return mockgoose(mongoose).then(
       () => {
         if (dummyConnect) {
-          mongoose.connect(config.server.mongo);
+          mongoose.connect(config.mongo);
         }
       }, err => Promise.reject(err)
     );
