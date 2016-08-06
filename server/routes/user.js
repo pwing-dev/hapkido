@@ -25,21 +25,28 @@ user.post('/setup', (req, res) => {
   if (req.user.initialized) {
     res.send(403); // TODO: .render('error403');
   } else {
-    User.findByIdAndUpdate(req.user._id, {
-      initialized: true,
-      displayName: req.body.displayName,
-    }, (err) => { if (err) throw err; });
-    Request.create({
-      sender: req.user._id,
-      // subject: TODO,
-      message: `${req.user.displayName} wants to lease ${req.body.room}`,
-      status: 'pending',
-    }, (err) => {
+    req.user.initialized = true;
+    req.user.displayName = req.body.displayName;
+    if (!req.user.save) {
+      // TODO I still think this is a bug
+      console.log('Setting up user without save method', req.user);
+    }
+    User.findByIdAndUpdate(req.user._id, req.user, err => {
       if (err) {
-        res.send(500); // TODO .render('error500');
-      } else {
-        res.redirect('/dashboard');
+        return res.send(500);
       }
+      Request.create({
+        sender: req.user._id,
+        // subject: TODO,
+        message: `${req.user.displayName} wants to lease ${req.body.room}`,
+        status: 'pending',
+      }, err => {
+        if (err) {
+          res.send(500); // TODO .render('error500');
+        } else {
+          res.redirect('/dashboard');
+        }
+      });
     });
   }
 });

@@ -62,25 +62,29 @@ router.get('/register', recaptcha.middleware.render, (req, res) => {
 });
 
 router.post('/register', recaptcha.middleware.verify, (req, res) => {
-  if (!req.recaptcha.error){
+  if (!req.recaptcha.error) {
     // just for testing, TODO: create view
     Account.register(
       new Account({
         username: req.body.username
       }),
       req.body.password,
-      (err) => {
-        if (!err) {
-          passport.authenticate('local')(req, res, () => {
-            // res.send('register successful');
-            if (req.session.redirectedFrom) {
-              res.redirect(req.session.redirectedFrom);
-            } else {
-              res.redirect('/dashboard');
-            }
+      (regErr, account) => {
+        if (!regErr) {
+          auth.getUser('local', account._id, (err, user) => {
+            if (err) return res.send(500);
+            req.logIn(user, loginErr => {
+              if (loginErr) res.send(500);
+              // res.send('register successful');
+              if (req.session.redirectedFrom) {
+                res.redirect(req.session.redirectedFrom);
+              } else {
+                res.redirect('/dashboard');
+              }
+            });
           });
         } else {
-          req.flash('error', err.message);
+          req.flash('error', regErr.message);
           res.redirect('/register');
         }
       }
