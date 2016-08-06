@@ -20,7 +20,7 @@ const auth            = apprequire('auth');
 const assets          = apprequire('static');
 const router          = apprequire('routes/router');
 
-const Application     = apprequire('models/application');
+const AppState        = apprequire('models/application');
 const setuptool       = apprequire('setuptool');
 
 /* eslint-disable object-shorthand, no-underscore-dangle, quote-props, consistent-return */
@@ -31,7 +31,7 @@ const createServer = () => new Promise((resolve, reject) => {
   mongoose.connect(config.get('mongo'));
   const db = mongoose.connection;
   db.on('error', e => reject(e));
-  db.on('open', () => Application.assertInitialized(error => {
+  db.on('open', () => AppState.assertInitialized((error, Application) => {
     if (error) {
       console.err(`Application assert failed: ${error}`);
       return;
@@ -82,13 +82,13 @@ const createServer = () => new Promise((resolve, reject) => {
     // session management
     app.use(
       session({
-        secret: config.get('session.secret'),
+        secret: Application.getSessionSecret(),
         resave: false,
         saveUninitialized: false,
         cookie: {
           path: '/',
           httpOnly: true,
-          maxAge: config.get('session.expiry')
+          maxAge: config.get('session.sessionDuration')
         },
         store: new MongoSession({
           mongooseConnection: db
@@ -136,18 +136,15 @@ const createServer = () => new Promise((resolve, reject) => {
 
     app.set('view engine', '.hbs');
 
-    Application.isSetupComplete((err, complete) => {
-      if (err) return reject(err);
-      if (complete) {
-        // setup passport authentication
-        app.use(auth.middleware());
-        // include router at subdirectory specified in config.json
-        app.use('/', router);
-      } else {
-        app.use('/', setuptool(app), router);
-      }
-      resolve(app);
-    });
+    if (Application.isSetupComplete()) {
+      // setup passport authentication
+      app.use(auth.middleware());
+      // include router at subdirectory specified in config.json
+      app.use('/', router);
+    } else {
+      app.use('/', setuptool(app), router);
+    }
+    resolve(app);
   }));
 });
 module.exports = createServer;
