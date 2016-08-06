@@ -116,10 +116,10 @@ const createServer = () => new Promise((resolve, reject) => {
       'handlebars': handlebars,
       helpers: {
         helpers: {
-          __: function(args) {
+          __: function(...args) {
             return i18n.__.apply(this, ...args);
           },
-          __n: function(args) {
+          __n: function(...args) {
             return i18n.__n.apply(this, ...args);
           }
         },
