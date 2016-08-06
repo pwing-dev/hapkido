@@ -32,118 +32,124 @@ const createServer = () => new Promise((resolve, reject) => {
   const db = mongoose.connection;
   db.on('error', e => reject(e));
   db.on('open', () => AppState.assertInitialized((error, Application) => {
-    if (error) {
-      reject(error);
-    }
-    // express setup
-    const app = express();
-
-    // body parser
-    app.use(bodyParser.urlencoded({ extended: true }));
-    app.use(bodyParser.json());
-
-    // cookie parser
-    app.use(cookieParser());
-
-    // IP Filter
-    app.use(ipFilter(config.get('whitelist'), {
-      mode: 'allow',
-      log: config.get('debug.verbosity') > 0,
-    }));
-
-    // Reverse Proxy
-    if (config.get('reverseProxy')) {
-      app.set('trust proxy', config.get('reverseProxy'));
-    }
-
-    // flash message support on responses
-    app.use(flash());
-    // i18n
-    i18n.configure({
-      locales: ['en', 'de'],
-      fallbacks: {
-        de: 'en'
-      },
-      defaultLocale: 'en',
-      cookie: 'locale',
-      queryParameter: 'lang',
-      directory: path.join(__dirname, '../frontend/locales'),
-      directoryPermissions: '755',
-      autoReload: true,
-      updateFiles: true,
-      api: {
-        '__': '__',  // now req.__ becomes req.__
-        '__n': '__n' // and req.__n can be called as req.__n
+    // we are in an async callback now, so if something bad happens, it will get
+    // get lost in promise-nirvana if we don't handle it explicitly
+    try {
+      if (error) {
+        reject(error);
       }
-    });
-    app.use(i18n.init);
+      // express setup
+      const app = express();
 
-    // session management
-    app.use(
-      session({
-        secret: Application.getSessionSecret(),
-        resave: false,
-        saveUninitialized: false,
-        cookie: {
-          path: '/',
-          httpOnly: true,
-          maxAge: config.get('sessionDuration')
+      // body parser
+      app.use(bodyParser.urlencoded({ extended: true }));
+      app.use(bodyParser.json());
+
+      // cookie parser
+      app.use(cookieParser());
+
+      // IP Filter
+      app.use(ipFilter(config.get('whitelist'), {
+        mode: 'allow',
+        log: config.get('debug.verbosity') > 0,
+      }));
+
+      // Reverse Proxy
+      if (config.get('reverseProxy')) {
+        app.set('trust proxy', config.get('reverseProxy'));
+      }
+
+      // flash message support on responses
+      app.use(flash());
+      // i18n
+      i18n.configure({
+        locales: ['en', 'de'],
+        fallbacks: {
+          de: 'en'
         },
-        store: new MongoSession({
-          mongooseConnection: db
-        })
-      })
-    );
+        defaultLocale: 'en',
+        cookie: 'locale',
+        queryParameter: 'lang',
+        directory: path.join(__dirname, '../frontend/locales'),
+        directoryPermissions: '755',
+        autoReload: true,
+        updateFiles: true,
+        api: {
+          '__': '__',  // now req.__ becomes req.__
+          '__n': '__n' // and req.__n can be called as req.__n
+        }
+      });
+      app.use(i18n.init);
 
-    // request logging
-    if (config.get('logging.enabled')) {
-      app.use(morgan('dev'));
-    }
-
-    // static asset generation
-    app.use(assets);
-
-    const frontendDir = 'frontend';
-
-    // templating
-    app.set('views', path.join(frontendDir, 'html/'));
-    app.engine('.hbs', exphbs({
-      defaultLayout: 'default',
-      extname: '.hbs',
-      layoutsDir: path.join(frontendDir, '/html/layouts/'),
-      partialsDir: path.join(frontendDir, '/html/partials/'),
-      'handlebars': handlebars,
-      helpers: {
-        helpers: {
-          __: function(...args) {
-            return i18n.__.apply(this, ...args);
+      // session management
+      app.use(
+        session({
+          secret: Application.getSessionSecret(),
+          resave: false,
+          saveUninitialized: false,
+          cookie: {
+            path: '/',
+            httpOnly: true,
+            maxAge: config.get('sessionDuration')
           },
-          __n: function(...args) {
-            return i18n.__n.apply(this, ...args);
-          }
-        },
-        title: 'hapkido',
-        render: hbsrender(handlebars),
-        ifdef: (variable, options) => {
-          if (typeof variable !== 'undefined') {
-            return options.fn(this);
-          }
-          return options.inverse(this);
-        },
+          store: new MongoSession({
+            mongooseConnection: db
+          })
+        })
+      );
+
+      // request logging
+      if (config.get('logging.enabled')) {
+        app.use(morgan('dev'));
       }
-    }));
 
-    app.set('view engine', '.hbs');
+      // static asset generation
+      app.use(assets);
 
-    if (Application.isSetupComplete()) {
-      // setup passport authentication
-      app.use(auth.middleware());
-      // include router at subdirectory specified in config.json
-      app.use('/', router);
-    } else {
-      app.use('/', setuptool(app), router);
+      const frontendDir = 'frontend';
+
+      // templating
+      app.set('views', path.join(frontendDir, 'html/'));
+      app.engine('.hbs', exphbs({
+        defaultLayout: 'default',
+        extname: '.hbs',
+        layoutsDir: path.join(frontendDir, '/html/layouts/'),
+        partialsDir: path.join(frontendDir, '/html/partials/'),
+        'handlebars': handlebars,
+        helpers: {
+          helpers: {
+            __: function(...args) {
+              return i18n.__.apply(this, ...args);
+            },
+            __n: function(...args) {
+              return i18n.__n.apply(this, ...args);
+            }
+          },
+          title: 'hapkido',
+          render: hbsrender(handlebars),
+          ifdef: (variable, options) => {
+            if (typeof variable !== 'undefined') {
+              return options.fn(this);
+            }
+            return options.inverse(this);
+          },
+        }
+      }));
+
+      app.set('view engine', '.hbs');
+
+      if (Application.isSetupComplete()) {
+        // setup passport authentication
+        app.use(auth.middleware());
+        // include router at subdirectory specified in config.json
+        app.use('/', router);
+      } else {
+        app.use('/', setuptool(app), router);
+      }
+      resolve(app);
+    } catch(e) {
+      reject(e);
     }
-    resolve(app);
   }));
 });
 module.exports = createServer;
