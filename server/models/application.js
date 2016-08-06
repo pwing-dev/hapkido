@@ -5,7 +5,7 @@ const Schema       = mongoose.Schema;
 
 const Application = new Schema({
   setupComplete: { type: Boolean, default: false },
-  sessionSecret: { type: String, default: randomstring.generate(7) },
+  sessionSecret: { type: String, default: randomstring.generate(64) },
 });
 Application.plugin(findOrCreate);
 
