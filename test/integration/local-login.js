@@ -1,9 +1,8 @@
-const supertest    = require('supertest');
 const config       = require('config');
-const requireFrom  = require('requirefrom');
+const supertest    = require('supertest');
 
-const expect       = require('chai').expect;
-const helpers      = require('requirefrom')('test')('helpers');
+const requireFrom  = require('requirefrom');
+const helpers      = requireFrom('test')('helpers');
 
 // ATTENTION mocha binds `this` to some test case object, but this doesn't
 // work with (arrow) => {functions}. So please use normal function s() {}
