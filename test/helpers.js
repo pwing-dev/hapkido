@@ -1,6 +1,7 @@
-const config     = require('config');
-const mongoose   = require('mongoose');
-const mockgoose  = require('mockgoose');
+const config      = require('config');
+const mongoose    = require('mongoose');
+const mockgoose   = require('mockgoose');
+const globalState = require('requirefrom')('server/models')('global-state');
 
 module.exports = {
   disableLogging: () => {
@@ -31,12 +32,13 @@ module.exports = {
       'BEgKlp0hnyR4-ujT5DMp_hE5g';
     return captchaResponse;
   },
+  setSetupComplete: globalState.setSetupComplete,
   mockgoose: dummyConnect => {
     mongoose.Promise = Promise;
     return mockgoose(mongoose).then(
       () => {
         if (dummyConnect) {
-          mongoose.connect('');
+          mongoose.connect(config.server.mongo);
         }
       }, err => Promise.reject(err)
     );

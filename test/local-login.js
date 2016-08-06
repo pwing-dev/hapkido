@@ -1,6 +1,7 @@
 const chai         = require('chai');
 const supertest    = require('supertest');
 const config       = require('config');
+const mongoose     = require('mongoose');
 const requireFrom  = require('requirefrom');
 
 const expect       = chai.expect;
@@ -19,15 +20,24 @@ describe('Local login', function() {
     captchaResponse = helpers.grecaptchaTestMode();
     this.timeout(0); // setup can take a little longer if cold
     helpers.disableLogging();
-    helpers.mockgoose().then(
-      () => {
+    helpers.mockgoose(true) // mock mongoose
+    .then(
+      // set the global state so that setupComplete is true
+      () => new Promise((resolve, reject) => {
+        helpers.setSetupComplete(err => {
+          if (err) return reject(err);
+          mongoose.disconnect(resolve); // because app will reconnect when created
+        });
+      }), e => Promise.reject(e)
+    ).then(
+      requireFrom('server')('server'),
+      e => Promise.reject(e)
+    ).then(
+      // get code to be tested after the environment is mocked
+      server => {
         Account = requireFrom('server/models')('account');
         // create an app instance
-        return requireFrom('server')('server')();
-      }, e => Promise.reject(e)
-    ).then(
-      server => {
-        app = server;
+        app = server
         request = supertest(app);
         done()
       }, done
