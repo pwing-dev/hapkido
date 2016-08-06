@@ -1,10 +1,8 @@
-const chai         = require('chai');
 const supertest    = require('supertest');
 const config       = require('config');
-const mongoose     = require('mongoose');
 const requireFrom  = require('requirefrom');
 
-const expect       = chai.expect;
+const expect       = require('chai').expect;
 const helpers      = require('requirefrom')('test')('helpers');
 
 // ATTENTION mocha binds `this` to some test case object, but this doesn't
@@ -13,29 +11,23 @@ const helpers      = require('requirefrom')('test')('helpers');
 
 describe('Local login', function() {
   let captchaResponse;
-  let Account;
   let app;
   let request;
+  let cookies;
   before(function(done) {
     captchaResponse = helpers.grecaptchaTestMode();
     this.timeout(0); // setup can take a little longer if cold
     helpers.disableLogging();
     helpers.mockgoose(true) // mock mongoose
     .then(
-      // set the global state so that setupComplete is true
-      () => new Promise((resolve, reject) => {
-        helpers.setSetupComplete(err => {
-          if (err) return reject(err);
-          mongoose.disconnect(resolve); // because app will reconnect when created
-        });
-      }), e => Promise.reject(e)
+      helpers.app.promiseSetupComplete,
+      e => Promise.reject(e)
     ).then(
-      requireFrom('server')('server'),
+      requireFrom('server')('server'), // use the createServer() function as callback
       e => Promise.reject(e)
     ).then(
       // get code to be tested after the environment is mocked
       server => {
-        Account = requireFrom('server/models')('account');
         // create an app instance
         app = server
         request = supertest(app);
@@ -43,57 +35,55 @@ describe('Local login', function() {
       }, done
     );
   });
-  describe('server', function() {
-    let cookies;
-    it('register a test user', function(done) {
-      request
-        .post('/register')
-        .type('form')
-        .send({
-          username: 'test',
-          password: 'test',
-          'g-recaptcha-response': captchaResponse,
-        })
-        .expect('location', '/dashboard')
-        .end((err, res) => {
-          if (!err) {
-            // see this gist https://gist.github.com/joaoneto/5152248
-            cookies = res.headers['set-cookie']
-              .map(r => r.replace(new RegExp('; path=/; httponly', 'gi'), ''))
-              .join('; ');
-          }
-          done(err);
-        });
-    });
-    it('cannot create the same user twice', function(done) {
-      request
-        .post('/register')
-        .type('form')
-        .send({
-          username: 'test',
-          password: 'test',
-          'g-recaptcha-response': captchaResponse,
-        })
-        .expect('location', '/register')
-        .end(done);
-    });
-    it('no registration or login required', function(done) {
-      request.get('/register')
-        .set('Cookie', cookies)
-        .expect('location', '/dashboard')
-        .end((err, res) => {
-          if (err) {
-            done(err);
-            return;
-          }
-          request.get('/login')
-            .set('Cookie', cookies)
-            .expect('location', '/dashboard')
-            .end(done);
-        });
-    });
+  it('can register a test user', function(done) {
+    request
+      .post('/register')
+      .type('form')
+      .send({
+        username: 'test',
+        password: 'test',
+        'g-recaptcha-response': captchaResponse,
+      })
+      .expect('location', '/dashboard')
+      .end((err, res) => {
+        if (!err) {
+          // see this gist https://gist.github.com/joaoneto/5152248
+          cookies = res.headers['set-cookie']
+            .map(r => r.replace(new RegExp('; path=/; httponly', 'gi'), ''))
+            .join('; ');
+        }
+        done(err);
+      });
   });
-  after(function() {
-    helpers.unmockgoose();
+  it('cannot create the same user twice', function(done) {
+    request
+      .post('/register')
+      .type('form')
+      .send({
+        username: 'test',
+        password: 'test',
+        'g-recaptcha-response': captchaResponse,
+      })
+      .expect('location', '/register')
+      .end(done);
+  });
+  it('no login required after registration', function(done) {
+    request.get('/register')
+      .set('Cookie', cookies)
+      .expect('location', '/dashboard')
+      .end((err, res) => {
+        if (err) {
+          done(err);
+          return;
+        }
+        request.get('/login')
+          .set('Cookie', cookies)
+          .expect('location', '/dashboard')
+          .end(done);
+      });
+  });
+  after(function(done) {
+    //request.destroy();
+    helpers.unmockgoose(done);
   });
 });

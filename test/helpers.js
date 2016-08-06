@@ -32,20 +32,32 @@ module.exports = {
       'BEgKlp0hnyR4-ujT5DMp_hE5g';
     return captchaResponse;
   },
-  setSetupComplete: Application.setSetupComplete,
   mockgoose: dummyConnect => {
     mongoose.Promise = Promise;
     return mockgoose(mongoose).then(
       () => {
         if (dummyConnect) {
-          mongoose.connect(config.mongo);
+          return Promise.resolve(mongoose.connect(config.mongo));
+        } else {
+          return Promise.resolve();
         }
       }, err => Promise.reject(err)
     );
   },
-  unmockgoose: () => {
-    if (mongoose.isMocked) {
-      mongoose.unmock();
+  unmockgoose: done => {
+    if (!done) {
+      done = () => console.warn('Not waiting for mongoose to be unmocked');
     }
+    if (mongoose.isMocked) {
+      mongoose.unmock(done);
+    }
+  },
+  app: {
+    promiseSetupComplete: () => new Promise((resolve, reject) => {
+      Application.setSetupComplete(err => {
+        if (err) return reject(err);
+        mongoose.disconnect(resolve); // because app will reconnect when created
+      });
+    })
   }
 };

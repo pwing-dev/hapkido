@@ -24,7 +24,7 @@ describe('Application', function() {
       });
     });
   });
-  after(function() {
-    helpers.unmockgoose();
+  after(function(done) {
+    helpers.unmockgoose(done);
   });
 });
