@@ -6,7 +6,7 @@ const apprequire    = require('requirefrom')('server');
 const config        = require('config');
 const ipFilter      = require('express-ipfilter');
 
-const globalState   = apprequire('models/global-state');
+const Application   = apprequire('models/application');
 const appauth       = apprequire('auth');
 
 module.exports = app => {
@@ -86,7 +86,7 @@ module.exports = app => {
     res.render('setuptool/overview');
   });
   setuptool.post('/done', (req, res) => {
-    globalState.setSetupComplete(err => {
+    Application.setSetupComplete(err => {
       res.redirect('/done');
     });
   });

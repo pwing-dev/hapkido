@@ -2,12 +2,12 @@ const mongoose     = require('mongoose');
 const findOrCreate = require('mongoose-findorcreate');
 const Schema       = mongoose.Schema;
 
-const GlobalState = new Schema({
-  setupComplete: {type: Boolean, default: false}
+const Application = new Schema({
+  setupComplete: { type: Boolean, default: false }
 });
-GlobalState.plugin(findOrCreate);
+Application.plugin(findOrCreate);
 
-const State = mongoose.model('GlobalState', GlobalState);
+const State = mongoose.model('Application', Application);
 const injectState = (() => {
   // cache an already resolved state
   let state = new Promise((resolve, reject) => {
@@ -28,7 +28,7 @@ const injectState = (() => {
 module.exports = {
   isSetupComplete: callback => injectState((err, state) => err ? callback(err) : callback(null, state.setupComplete)),
   setSetupComplete: callback => injectState((err, state) => {
-    if(err) return callback(err);
+    if (err) return callback(err);
     state.setupComplete = true;
     state.save(callback);
   }),

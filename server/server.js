@@ -20,7 +20,7 @@ const auth            = apprequire('auth');
 const assets          = apprequire('static');
 const router          = apprequire('routes/router');
 
-const globalState     = apprequire('models/global-state');
+const Application     = apprequire('models/application');
 const setuptool       = apprequire('setuptool');
 
 const createServer = () => new Promise((resolve, reject) => {
@@ -125,7 +125,7 @@ const createServer = () => new Promise((resolve, reject) => {
 
     app.set('view engine', '.hbs');
 
-    globalState.isSetupComplete((err, complete) => {
+    Application.isSetupComplete((err, complete) => {
       if (err) return reject(err);
       if (complete) {
         // setup passport authentication

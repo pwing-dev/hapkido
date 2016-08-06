@@ -12,11 +12,6 @@
       "clientSecret": "LdaLDC_xadOmTIPirNJ24Jc3"
     }
   },
-  "setuptool": {
-    "whitelist": [
-      "127.0.0.0/8", "::1/8"
-    ]
-  },
   "whitelist": [
     "10.0.0.0/8", "192.168.0.0/16", "::1/8"
   ],
@@ -30,5 +25,10 @@
   },
   "logging": {
     "enabled": true
+  },
+  "setuptool": {
+    "whitelist": [
+      "127.0.0.0/8", "::1/8"
+    ]
   }
 }
