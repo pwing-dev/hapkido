@@ -46,6 +46,11 @@ const createServer = () => new Promise((resolve, reject) => {
       log: config.get('debug.verbosity') > 0,
     }));
 
+    // Reverse Proxy
+    if (config.get('reverseProxy')) {
+      app.set('trust proxy', config.get('reverseProxy'));
+    }
+
     // flash message support on responses
     app.use(flash());
     // i18n

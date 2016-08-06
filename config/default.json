@@ -1,6 +1,7 @@
 {
   "port": 3000,
   "baseURL": "http://127.0.0.1.xip.io:3000/",
+  "reverseProxy": false,
   "mongo": "mongodb://localhost/hapkido",
   "session": {
     "secret": "foobar",
