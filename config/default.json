@@ -27,7 +27,7 @@
     },
     "debug": {
       "routes": true,
-      "verbosity": 1
+      "verbosity": 0
     },
     "logging": {
       "enabled": true
