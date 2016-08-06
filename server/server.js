@@ -23,13 +23,19 @@ const router          = apprequire('routes/router');
 const Application     = apprequire('models/application');
 const setuptool       = apprequire('setuptool');
 
+/* eslint-disable object-shorthand, no-underscore-dangle, quote-props, consistent-return */
+
 const createServer = () => new Promise((resolve, reject) => {
   // initialize mongoose
   mongoose.Promise = Promise;
   mongoose.connect(config.get('mongo'));
   const db = mongoose.connection;
   db.on('error', e => reject(e));
-  db.on('open', () => {
+  db.on('open', () => Application.assertInitialized(error => {
+    if (error) {
+      console.err(`Application assert failed: ${error}`);
+      return;
+    }
     // express setup
     const app = express();
 
@@ -110,11 +116,11 @@ const createServer = () => new Promise((resolve, reject) => {
       'handlebars': handlebars,
       helpers: {
         helpers: {
-          __: function(){
-            return i18n.__.apply(this, arguments);
+          __: function(args) {
+            return i18n.__.apply(this, ...args);
           },
-          __n: function(){
-            return i18n.__n.apply(this, arguments);
+          __n: function(args) {
+            return i18n.__n.apply(this, ...args);
           }
         },
         title: 'hapkido',
@@ -142,6 +148,6 @@ const createServer = () => new Promise((resolve, reject) => {
       }
       resolve(app);
     });
-  });
+  }));
 });
 module.exports = createServer;

@@ -1,9 +1,11 @@
 const mongoose     = require('mongoose');
 const findOrCreate = require('mongoose-findorcreate');
+const randomstring = require('randomstring');
 const Schema       = mongoose.Schema;
 
 const Application = new Schema({
-  setupComplete: { type: Boolean, default: false }
+  setupComplete: { type: Boolean, default: false },
+  sessionSecret: { type: String, default: randomstring.generate(7) },
 });
 Application.plugin(findOrCreate);
 
@@ -26,10 +28,17 @@ const injectState = (() => {
 })();
 
 module.exports = {
-  isSetupComplete: callback => injectState((err, state) => err ? callback(err) : callback(null, state.setupComplete)),
+  assertInitialized: callback => injectState(() => callback()),
+  isSetupComplete: callback => injectState((err, state) => {
+    if (err) {
+      callback(err);
+    } else {
+      callback(null, state.setupComplete);
+    }
+  }),
   setSetupComplete: callback => injectState((err, state) => {
     if (err) return callback(err);
     state.setupComplete = true;
-    state.save(callback);
+    return state.save(callback);
   }),
 };
