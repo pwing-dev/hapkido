@@ -4,6 +4,7 @@ const GoogleAuth    = require('passport-google-oauth20').Strategy;
 const LocalStrategy = require('passport-local').Strategy;
 const url           = require('url');
 const urljoin       = require('url-join');
+const ObjectId      = require('mongoose').Types.ObjectId;
 
 const models        = require('requirefrom')('server/models');
 const Account       = models('account');
@@ -12,55 +13,53 @@ const User          = models('user/user');
 const baseUrl       = url.parse(config.get('server.baseURL'));
 const googleCallbackPath = '/auth/google/callback';
 
-// LOCAL Strategy
-const mongooseAuthenticator = Account.authenticate();
-passport.use(
-  new LocalStrategy((username, password, done) =>
-    mongooseAuthenticator(username, password, (authErr, profile, message) => {
-      if (profile) { // login successful
-        User.findOrCreate(
-          {
-            auth: {
-              provider: 'local',
-              id: profile._id // TODO we can use username here as well. Which do we prefer?
-            }
-          }, (err, user/* , created */) => done(err, user)
-        );
-      } else {
-        done(authErr, false, message);
-      }
-    })
-  )
-);
-
-// GOOGLE Strategy
-passport.use(new GoogleAuth(
-  {
-    clientID: config.get('server.auth.google.clientId'),
-    clientSecret: config.get('server.auth.google.clientSecret'),
-    callbackURL: urljoin(baseUrl.href, googleCallbackPath),
-  },
-  (accessToken, refreshToken, profile, done) => {
-    User.findOrCreate(
-      {
-        auth: {
-          provider: 'google',
-          id: profile.id
-        }
-      }, (err, user/* , created */) => done(err, user)
-    );
-  }
-));
-
-passport.serializeUser((user, done) => done(null, user._id));
-passport.deserializeUser((user, done) => User.findById(user, done));
-
 module.exports = {
-  init: app => {
+  getUser: (strategy, id, done) => User.findOrCreate({
+    auth: {
+      provider: strategy,
+      id
+    }
+  }, (err, user) => done(err, user)),
+  middleware: () => {
+    // LOCAL Strategy
+    const mongooseAuthenticator = Account.authenticate();
+    passport.use(
+      new LocalStrategy((username, password, done) =>
+        mongooseAuthenticator(username, password, (authErr, profile, message) => {
+          if (profile) { // login successful
+            module.exports.getUser('local', profile._id, done);
+          } else {
+            done(authErr, false, message);
+          }
+        })
+      )
+    );
+
+    // GOOGLE Strategy
+    passport.use(new GoogleAuth(
+      {
+        clientID: config.get('server.auth.google.clientId'),
+        clientSecret: config.get('server.auth.google.clientSecret'),
+        callbackURL: urljoin(baseUrl.href, googleCallbackPath),
+      },
+      (accessToken, refreshToken, profile, done) =>
+        module.exports.getUser('google', profile.id, done)
+    ));
+
+    passport.serializeUser((user, done) => done(null, user._id));
+    passport.deserializeUser((user, done) => User.findById(ObjectId(user), done));
+
+    
     // Initialize Passport and restore authentication state, if any, from the
     // session.
-    app.use(passport.initialize());
-    app.use(passport.session());
+    const ppInit = passport.initialize();
+    const ppSession = passport.session();
+    return (req, res, next) => {
+      ppInit(req, res, err => {
+        if (err) return next(err);
+        ppSession(req, res, next);
+      });
+    };
   },
   googleCallbackPath
 };
