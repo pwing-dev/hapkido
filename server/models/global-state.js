@@ -27,4 +27,9 @@ const injectState = (() => {
 
 module.exports = {
   isSetupComplete: callback => injectState((err, state) => err ? callback(err) : callback(null, state.setupComplete)),
+  setSetupComplete: callback => injectState((err, state) => {
+    if(err) return callback(err);
+    state.setupComplete = true;
+    state.save(callback);
+  }),
 };
