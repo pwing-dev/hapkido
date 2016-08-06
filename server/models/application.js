@@ -27,10 +27,9 @@ const injectState = (() => {
   };
 })();
 
-const makeApi = state => ({
+const makeSyncApi = state => ({
   isSetupComplete: () => state.setupComplete,
-  setSetupComplete: () => { state.setupComplete = true; },
-  getSessionSecret: () => state.session.secret
+  getSessionSecret: () => state.sessionSecret
 });
 
 module.exports = {
@@ -38,7 +37,7 @@ module.exports = {
     if (err) {
       callback(err);
     } else {
-      callback(null, makeApi(state));
+      callback(null, makeSyncApi(state));
     }
   }),
   promiseInitialized: () => new Promise((resolve, reject) => {
@@ -53,10 +52,15 @@ module.exports = {
 };
 
 // generate asynchronous api
-const dummyApi = makeApi();
+const dummyApi = makeSyncApi();
 Object.keys(dummyApi).forEach(fun => {
   module.exports[fun] = (...args) => {
     const callback = args.pop();
     module.exports.promiseInitialized().then(api => callback(null, api[fun](...args)), callback);
   };
+});
+
+module.exports.setSetupComplete = done => injectState((err, state) => {
+  state.setupComplete = true;
+  state.save(done);
 });

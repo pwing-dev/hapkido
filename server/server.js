@@ -33,8 +33,7 @@ const createServer = () => new Promise((resolve, reject) => {
   db.on('error', e => reject(e));
   db.on('open', () => AppState.assertInitialized((error, Application) => {
     if (error) {
-      console.err(`Application assert failed: ${error}`);
-      return;
+      reject(error);
     }
     // express setup
     const app = express();
@@ -88,7 +87,7 @@ const createServer = () => new Promise((resolve, reject) => {
         cookie: {
           path: '/',
           httpOnly: true,
-          maxAge: config.get('session.sessionDuration')
+          maxAge: config.get('sessionDuration')
         },
         store: new MongoSession({
           mongooseConnection: db
