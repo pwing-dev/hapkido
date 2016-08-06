@@ -19,6 +19,9 @@ const auth            = apprequire('auth');
 const assets          = apprequire('static');
 const router          = apprequire('routes/router');
 
+const globalState     = apprequire('models/global-state');
+const setuptool       = apprequire('setuptool');
+
 const createServer = () => new Promise((resolve, reject) => {
   // initialize mongoose
   mongoose.Promise = Promise;
@@ -36,6 +39,7 @@ const createServer = () => new Promise((resolve, reject) => {
     // cookie parser
     app.use(cookieParser());
 
+    // flash message support on responses
     app.use(flash());
     // i18n
     i18n.configure({
@@ -82,12 +86,9 @@ const createServer = () => new Promise((resolve, reject) => {
     // static asset generation
     app.use(assets);
 
-    // setup passport authentication
-    auth.init(app);
-
     const frontendDir = 'frontend';
 
-    // Templating
+    // templating
     app.set('views', path.join(frontendDir, 'html/'));
     app.engine('.hbs', exphbs({
       defaultLayout: 'default',
@@ -117,9 +118,18 @@ const createServer = () => new Promise((resolve, reject) => {
 
     app.set('view engine', '.hbs');
 
-    // include router at subdirectory specified in config.json
-    app.use('/', router);
-    resolve(app);
+    globalState.isSetupComplete((err, complete) => {
+      if (err) return reject(err);
+      if (complete) {
+        // setup passport authentication
+        app.use(auth.middleware());
+        // include router at subdirectory specified in config.json
+        app.use('/', router);
+      } else {
+        app.use('/', setuptool(app), router);
+      }
+      resolve(app);
+    });
   });
 });
 module.exports = createServer;
