@@ -3,6 +3,8 @@ const passport      = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 const randomstring  = require('randomstring');
 const apprequire    = require('requirefrom')('server');
+const config        = require('config');
+const ipFilter      = require('express-ipfilter');
 
 const globalState   = apprequire('models/global-state');
 const appauth       = apprequire('auth');
@@ -10,7 +12,7 @@ const appauth       = apprequire('auth');
 module.exports = app => {
   // all middlewares we register will pass on if this is false
   let active = true;
-  
+
   // initialize key, so `post`ing "undefined" to login won't work
   let key = randomstring.generate();
 
@@ -26,7 +28,7 @@ module.exports = app => {
       } else if (password !== key) {
         done(null, false);
       } else {
-        done(null, {user: 'admin'});
+        done(null, { user: 'admin' });
       }
     })
   );
@@ -35,6 +37,12 @@ module.exports = app => {
   // Also always pass on the user so later serializers get access to it
   passport.serializeUser((user, done) => done(active ? null : 'pass', user));
   passport.deserializeUser((user, done) => done(active ? null : 'pass', user));
+
+  // initialize IP filter
+  setuptool.use(ipFilter(config.get('server.ipRanges.setup'), {
+    mode: 'allow',
+    log: config.get('server.debug.verbosity') > 0,
+  }));
 
   setuptool.get('/login', (req, res) => {
     key = randomstring.generate();

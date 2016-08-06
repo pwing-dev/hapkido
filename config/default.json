@@ -13,13 +13,21 @@
         "clientSecret": "LdaLDC_xadOmTIPirNJ24Jc3"
       }
     },
+    "ipRanges": {
+      "app": [
+        "10.0.0.0/8", "192.168.0.0/16", "::1/8"
+      ],
+      "setup": [
+        "127.0.0.0/8", "::1/8"
+      ]
+    },
     "recaptcha": {
       "site_key": "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI",
       "secret_key": "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe"
     },
     "debug": {
       "routes": true,
-      "verbosity": 0
+      "verbosity": 1
     },
     "logging": {
       "enabled": true

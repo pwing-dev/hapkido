@@ -13,6 +13,7 @@ const mongoose        = require('mongoose');
 const MongoSession    = require('connect-mongo')(session);
 const flash           = require('connect-flash');
 const path            = require('path');
+const ipFilter        = require('express-ipfilter');
 
 const apprequire      = require('requirefrom')('server');
 const auth            = apprequire('auth');
@@ -38,6 +39,12 @@ const createServer = () => new Promise((resolve, reject) => {
 
     // cookie parser
     app.use(cookieParser());
+
+    // IP Filter
+    app.use(ipFilter(config.get('server.ipRanges.app'), {
+      mode: 'allow',
+      log: config.get('server.debug.verbosity') > 0,
+    }));
 
     // flash message support on responses
     app.use(flash());
