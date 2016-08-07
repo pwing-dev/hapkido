@@ -16,7 +16,6 @@ const path            = require('path');
 const ipFilter        = require('express-ipfilter');
 
 const apprequire      = require('requirefrom')('server');
-const auth            = apprequire('auth');
 const assets          = apprequire('static');
 const router          = apprequire('routes/router');
 
@@ -139,12 +138,10 @@ const createServer = () => new Promise((resolve, reject) => {
       app.set('view engine', '.hbs');
 
       if (Application.isSetupComplete()) {
-        // setup passport authentication
-        app.use(auth.middleware());
         // include router at subdirectory specified in config.json
-        app.use('/', router);
+        app.use('/', router());
       } else {
-        app.use('/', setuptool(app), router);
+        app.use('/', setuptool(app), router());
       }
       resolve(app);
     } catch(e) {

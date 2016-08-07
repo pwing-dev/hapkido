@@ -1,5 +1,5 @@
 const express       = require('express');
-const passport      = require('passport');
+const Passport      = require('passport').Passport;
 const LocalStrategy = require('passport-local').Strategy;
 const randomstring  = require('randomstring');
 const apprequire    = require('requirefrom')('server');
@@ -7,7 +7,6 @@ const config        = require('config');
 const ipFilter      = require('express-ipfilter');
 
 const Application   = apprequire('models/application');
-const appauth       = apprequire('auth');
 
 module.exports = app => {
   // all middlewares we register will pass on if this is false
@@ -18,9 +17,8 @@ module.exports = app => {
 
   /* eslint-disable new-cap */
   const setuptool = express.Router();
+  const passport = new Passport();
 
-  app.use(passport.initialize());
-  app.use(passport.session());
   passport.use('setuptool-otp',
     new LocalStrategy((username, password, done) => {
       if (!active) {
@@ -38,6 +36,9 @@ module.exports = app => {
   passport.serializeUser((user, done) => done(active ? null : 'pass', user));
   passport.deserializeUser((user, done) => done(active ? null : 'pass', user));
 
+  setuptool.use(passport.initialize());
+  setuptool.use(passport.session());
+  
   // initialize IP filter
   setuptool.use(ipFilter(config.get('setuptool.whitelist'), {
     mode: 'allow',
@@ -100,7 +101,6 @@ module.exports = app => {
         return req.send(500);
       }
       active = false;
-      appauth.middleware(); // Just creating the middleware will extend passport with the additional strategies
       res.redirect('/');
     });
   });

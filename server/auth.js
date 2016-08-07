@@ -1,5 +1,4 @@
 const config        = require('config');
-const passport      = require('passport');
 const GoogleAuth    = require('passport-google-oauth20').Strategy;
 const LocalStrategy = require('passport-local').Strategy;
 const url           = require('url');
@@ -20,7 +19,7 @@ module.exports = {
       id
     }
   }, (err, user) => done(err, user)),
-  middleware: () => {
+  middleware: passport => {
     // LOCAL Strategy
     const mongooseAuthenticator = Account.authenticate();
     passport.use(
