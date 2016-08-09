@@ -17,11 +17,8 @@ describe('Local login', function() {
     captchaResponse = helpers.grecaptchaTestMode();
     this.timeout(0); // setup can take a little longer if cold
     helpers.disableLogging();
-    helpers.mockgoose(true) // mock mongoose
+    helpers.app.promiseSetupComplete()
     .then(
-      helpers.app.promiseSetupComplete,
-      e => Promise.reject(e)
-    ).then(
       requireFrom('server')('server'), // use the createServer() function as callback
       e => Promise.reject(e)
     ).then(

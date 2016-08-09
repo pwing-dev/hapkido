@@ -1,17 +1,9 @@
 const chai         = require('chai');
 const expect       = chai.expect;
-const helpers      = require('./helpers');
+const helpers      = require('../helpers');
+const role         = require('requirefrom')('server/models/user')('role');
 
 describe('Role', function() {
-  let role;
-  before(function(done) {
-    
-    this.timeout(0); // setup can take a little longer if cold
-    helpers.mockgoose(true).then(() => {
-      role = require('requirefrom')('server/models/user')('role');
-      done();
-    }, done);
-  });
   describe('get admin role', function() {
     it('is special and named', function(done) {
       role.findAdmin((err, admin) => {

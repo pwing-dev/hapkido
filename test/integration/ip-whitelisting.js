@@ -14,7 +14,7 @@ describe('IP range filters', function() {
         this.timeout(0); // setup can take a little longer if cold
         config.whitelist = ['::1', '127.0.0.1', '::ffff:127.0.0.1'];
         helpers.disableLogging();
-        helpers.mockgoose(true) // mock mongoose
+        helpers.app.promiseAppStateReloaded()
         .then(
           helpers.app.promiseSetupComplete,
           e => Promise.reject(e)
@@ -24,7 +24,6 @@ describe('IP range filters', function() {
         ).then(
           // get code to be tested after the environment is mocked
           server => {
-            Account = requireFrom('server/models')('account');
             // create an app instance
             app = server
             request = supertest(app);
@@ -60,14 +59,10 @@ describe('IP range filters', function() {
       this.timeout(0); // setup can take a little longer if cold
       config.whitelist = ['::1', '127.0.0.1', '::ffff:127.0.0.1'];
       helpers.disableLogging();
-      helpers.mockgoose() // mock mongoose
+      requireFrom('server')('server')()
       .then(
-        requireFrom('server')('server'), // use the createServer() function as callback
-        e => Promise.reject(e)
-      ).then(
         // get code to be tested after the environment is mocked
         server => {
-          Account = requireFrom('server/models')('account');
           // create an app instance
           app = server
           request = supertest(app);
