@@ -12,18 +12,23 @@ Application.plugin(findOrCreate);
 module.exports = (() => {
   const State = mongoose.model('Application', Application);
   const injectState = (() => {
+    let state;
     // cache an already resolved state
-    let state = new Promise((resolve, reject) => {
-      State.findOrCreate({}, (err, doc) => {
-        if (err) {
-          reject(err);
-          return;
-        }
-        state = doc;
-        resolve(doc);
+    const loadState = () => {
+      state = new Promise((resolve, reject) => {
+        State.findOrCreate({}, (err, doc) => {
+          if (err) {
+            reject(err);
+            return;
+          }
+          state = doc;
+          resolve(doc);
+        });
       });
-    });
-    return callback => {
+    };
+    loadState();
+    return (callback, forceReload) => {
+      if (forceReload) loadState();
       Promise.resolve(state).then(val => callback(null, val), err => callback(err));
     };
   })();
@@ -34,6 +39,7 @@ module.exports = (() => {
   });
 
   const API = {
+    _forceReload: done => injectState(() => done(), true),
     assertInitialized: callback => injectState((err, state) => {
       if (err) {
         callback(err);
