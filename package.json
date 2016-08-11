@@ -23,10 +23,10 @@
   "dependencies": {
     "config": "^1.21.0",
     "hapkido-core": "^0.0.1",
-    "hapkido-server": "0.0.1",
-    "hapkido-bin": "^0.0.1"
+    "hapkido-server": "^0.0.1",
+    "hapkido-cli": "^0.0.1"
   },
   "devDependencies": {
-    "nodemon": "^1.10.0",
+    "nodemon": "^1.10.0"
   }
 }

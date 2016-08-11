@@ -1,5 +1,5 @@
 const config       = require('config');
-const createServer = require('hapkido-cli');
+const createServer = require('hapkido-server');
 
 if (require.main === module) {
   // called directly from cli
