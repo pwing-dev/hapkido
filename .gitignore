@@ -1,4 +1,7 @@
-node_modules/
+node_modules/*
+!node_modules/hapkido-core
+!node_modules/hapkido-server
+!node_modules/hapkido-cli
 static/**
 !static/**/
 !static/js/.gitkeep

@@ -1,10 +1,10 @@
 const config       = require('config');
-const createServer = require('requirefrom')('server')('server');
+const createServer = require('hapkido-cli');
 
 if (require.main === module) {
   // called directly from cli
   createServer().then(
-    app => app.listen(config.get('port')),
+    app => app.listen(config.get('hapkido-server.port')),
     error => { console.error(error); process.exit(1); }
   );
 } else {

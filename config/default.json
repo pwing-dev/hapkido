@@ -1,32 +1,34 @@
 {
-  "port": 3000,
-  "baseURL": "http://127.0.0.1.xip.io:3000/",
-  "reverseProxy": false,
-  "mongo": "mongodb://localhost/hapkido",
-  "sessionDuration": 31536000000,
-  "auth": {
-    "google": {
-      "clientId": "501213114870-17hitfqiibdeiqdab3kvg87mcjp3b7fs.apps.googleusercontent.com",
-      "clientSecret": "LdaLDC_xadOmTIPirNJ24Jc3"
-    }
-  },
-  "whitelist": [
-    "10.0.0.0/8", "192.168.0.0/16", "::1/8", "::ffff:127.0.0.1", "127.0.0.1"
-  ],
-  "recaptcha": {
-    "site_key": "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI",
-    "secret_key": "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe"
-  },
-  "debug": {
-    "routes": true,
-    "verbosity": 0
-  },
-  "logging": {
-    "enabled": true
-  },
-  "setuptool": {
+  "hapkido-server": {
+    "port": 3000,
+    "baseURL": "http://127.0.0.1.xip.io:3000/",
+    "reverseProxy": false,
+    "mongo": "mongodb://localhost/hapkido",
+    "sessionDuration": 31536000000,
+    "auth": {
+      "google": {
+        "clientId": "501213114870-17hitfqiibdeiqdab3kvg87mcjp3b7fs.apps.googleusercontent.com",
+        "clientSecret": "LdaLDC_xadOmTIPirNJ24Jc3"
+      }
+    },
     "whitelist": [
-      "::ffff:127.0.0.1", "127.0.0.0/8", "::1/8"
-    ]
+      "10.0.0.0/8", "192.168.0.0/16", "::1/8", "::ffff:127.0.0.1", "127.0.0.1"
+    ],
+    "recaptcha": {
+      "site_key": "6LeIxAcTAAAAAJcZVRqyHh71UMIEGNQ_MXjiZKhI",
+      "secret_key": "6LeIxAcTAAAAAGG-vFI1TnRWxMZNFuojJ4WifJWe"
+    },
+    "debug": {
+      "routes": true,
+      "verbosity": 0
+    },
+    "logging": {
+      "enabled": true
+    },
+    "setuptool": {
+      "whitelist": [
+        "::ffff:127.0.0.1", "127.0.0.0/8", "::1/8"
+      ]
+    }
   }
 }
