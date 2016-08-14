@@ -12,7 +12,12 @@
     "tests:server": "cd node_modules/hapkido-server && npm run tests",
     "lint": "npm run lint:core && npm run lint:server",
     "lint:core": "cd node_modules/hapkido-core && npm run lint",
-    "lint:server": "cd node_modules/hapkido-server && npm run lint"
+    "lint:server": "cd node_modules/hapkido-server && npm run lint",
+    "postinstall": "npm run install:core && npm run install:server && npm run install:cli",
+    "postupdate": "npm run install:core && npm run install:server && npm run install:cli",
+    "install:core": "cd node_modules/hapkido-core && npm i",
+    "install:server": "cd node_modules/hapkido-server && npm i",
+    "install:cli": "cd node_modules/hapkido-cli && npm i"
   },
   "repository": {
     "type": "git",
